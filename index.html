@@ -3922,9 +3922,9 @@ function updateMazeTrack() {
             box.innerText = "🟨";
         } else {
             // Boss icons for future rooms
-            if (i === 10){box.innerHTML = '<img src="lord.png" class="boss-icon">';box.classList.add("boss10");}
-            else if (i === 20){box.innerHTML = '<img src="keeper.png" class="boss-icon">';box.classList.add("boss20");}
-            else if (i === 30){box.innerHTML = '<img src="sovereign.png" class="boss-icon">';box.classList.add("boss30");}
+            if (i === 10){box.innerHTML = '<img src="cartographer.png" class="boss-icon">';box.classList.add("boss10");}
+            else if (i === 20){box.innerHTML = '<img src="engineer.png" class="boss-icon">';box.classList.add("boss20");}
+            else if (i === 30){box.innerHTML = '<img src="forecaster.png" class="boss-icon">';box.classList.add("boss30");}
             else box.innerText = "⬛";
         }
         
@@ -4175,16 +4175,16 @@ function loadQuestion() {
 // =============================================
         
     if(room === 10){
-        bossImage = "lord.png";
-        bossClass = "lordGlow";
+        bossImage = "cartographer.png";
+        bossClass = "cartographerGlow";
     }
     else if(room === 20){
-        bossImage = "keeper.png";
-        bossClass = "keeperGlow";
+        bossImage = "engineer.png";
+        bossClass = "engineerGlow";
     }
     else{
-        bossImage = "sovereign.png";
-        bossClass = "sovereignGlow";
+        bossImage = "forecaster.png";
+        bossClass = "forecasterGlow";
     }
 
         questionElement.innerHTML = `
@@ -4715,15 +4715,15 @@ function unlockArtifact(key) {
     let streakColor = "#fbbf24";
 
 if (streak === 5) {
-    streakMsg = `<span class="streak"><img src="streakinflation.png" class="streak-icon">INFLATION TAMED</span>`;
+    streakMsg = `<span class="streak"><img src="streakspark.png" class="streak-icon">INFLATION TAMED</span>`;
     streakColor = "#d6b15c";
 }
 else if (streak === 10) {
-    streakMsg = `<span class="streak"><img src="streakgrowth.png" class="streak-icon">GROWTH SECURED</span>`;
+    streakMsg = `<span class="streak"><img src="streakgear.png" class="streak-icon">GROWTH SECURED</span>`;
     streakColor = "#c46a3a";
 }
 else if (streak === 20) {
-    streakMsg = `<span class="streak"><img src="streakstabilization.png" class="streak-icon">STABILIZATION ACHIEVED</span>`;
+    streakMsg = `<span class="streak"><img src="streaksignal.png" class="streak-icon">STABILIZATION ACHIEVED</span>`;
     streakColor = "#f0c75e";
 }
 
