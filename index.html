@@ -83,13 +83,26 @@ body {
     align-items: center;
 
     overflow-x: hidden;
-    color: #f3ead2;
+    color: #e6ecf5;
 
     background: url('question_background_image.png');
     background-size: cover;
     background-position: center;
 }
-    
+
+/* subtle cold overlay to kill warmth */
+body::after{
+    content:"";
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: radial-gradient(circle at center, rgba(10,20,40,0.35), rgba(0,0,0,0.75));
+    pointer-events:none;
+    z-index:-1;
+}
+
 .dungeon-container {
     position: relative;
     display: flex;
@@ -102,6 +115,7 @@ body {
     margin-top: 20px;
 }
 
+/* CENTER BLOCK */
 .start-content{
   width: 100%;
   max-width: 420px;
@@ -111,71 +125,80 @@ body {
   text-align:center;    
 }
 
+/* TITLE — sharper, colder */
 .title{
   font-size:64px;
   letter-spacing:4px;
   margin-bottom:10px;
-  color:#f4d58d;
-  text-align:center;
+  color:#f0c86a;
+
   text-shadow:
-    0 0 14px rgba(214,177,92,0.85),
-    0 0 34px rgba(180,83,9,0.55),
+    0 0 10px rgba(240,200,106,0.7),
+    0 0 25px rgba(40,90,160,0.5),
     0 3px 8px rgba(0,0,0,0.9);
 }
 
+/* SUBTITLE — shift to blue tone */
 .subtitle{
   font-size:34px;
   margin-bottom:35px;
   letter-spacing:2px;
-  text-align:center;
-  color:#b98746;
+  color:#7fa8d6;
+
   text-shadow:
-    0 0 10px rgba(185,135,70,0.45),
+    0 0 12px rgba(80,130,200,0.45),
     0 2px 6px rgba(0,0,0,0.85);
 }
 
+/* TAGLINE */
 .tagline{
   margin-bottom:30px;
   font-style:italic;
-  opacity:0.88;
-  text-align:center;
-  color:#d8c7a0;
+  opacity:0.9;
+  color:#c9d4e6;
+
   text-shadow: 0 2px 6px rgba(0,0,0,0.85);
 }
 
+/* INPUT — looks like a console panel now */
 .name-input{
   width:100%;
   max-width:320px;
   text-align:center;
   padding:15px;
   border-radius:10px;
-  border:1px solid rgba(214,177,92,0.45);   
-  background: rgba(12,18,18,0.88);          
-  color:#f3ead2;                             
+
+  border:1px solid rgba(120,170,255,0.45);   
+  background: rgba(8,14,28,0.9);          
+  color:#e6ecf5;                             
   font-size:20px;
   margin-bottom:20px;
   outline:none;
+
   box-shadow:
-    0 0 14px rgba(214,177,92,0.28),
-    inset 0 0 12px rgba(0,0,0,0.65);  
+    0 0 12px rgba(80,130,200,0.35),
+    inset 0 0 12px rgba(0,0,0,0.7);
 }
 
+/* INPUT FOCUS — command activation feel */
 .name-input:focus{
-  border-color: rgba(240,199,94,0.75);
+  border-color: rgba(140,190,255,0.8);
   box-shadow:
-    0 0 18px rgba(240,199,94,0.45),
-    0 0 32px rgba(100,36,24,0.35),
-    inset 0 0 12px rgba(0,0,0,0.75);
+    0 0 18px rgba(120,180,255,0.6),
+    0 0 35px rgba(40,90,160,0.5),
+    inset 0 0 12px rgba(0,0,0,0.8);
 }
 
+/* BUTTON BASE (you’ll likely style deeper later) */
 .start-btn{
   width:100%;
   max-width:320px;
 }
-	
+
+/* PLACEHOLDER */
 #emailInput::placeholder,
 #username::placeholder{
-    color: rgba(216,199,160,0.52);
+    color: rgba(180,200,230,0.55);
     font-style: italic;
     letter-spacing: 0.5px;
     text-align: center;
@@ -195,32 +218,31 @@ body {
     text-align: center;
 
     background: radial-gradient(circle at center,
-        rgba(42,74,64,0.34) 0%,
-        rgba(18,24,24,0.92) 52%,
-        rgba(4,5,5,0.98) 100%);
+        rgba(25,70,120,0.34) 0%,
+        rgba(8,16,32,0.94) 52%,
+        rgba(2,4,10,0.98) 100%);
 
     backdrop-filter: blur(6px);
     border-radius: 14px;
     box-sizing: border-box;
 
     box-shadow:
-        0 0 24px rgba(214,177,92,0.24),
-        0 0 70px rgba(88,28,24,0.28),
-        inset 0 0 38px rgba(0,0,0,0.72);
+        0 0 24px rgba(80,140,220,0.28),
+        0 0 70px rgba(10,45,95,0.35),
+        inset 0 0 38px rgba(0,0,0,0.76);
 
-    border: 1px solid rgba(214,177,92,0.34);
+    border: 1px solid rgba(240,200,106,0.34);
     animation: torchFlicker 6s infinite;
     transition: box-shadow .3s ease, border-color .3s ease;
     position: relative;
 }
 
-/* Boss state styling — triggered during boss fights (DO NOT REMOVE) */
 #gameBox.boss-mode {
-    border: 2px solid #d6b15c;
+    border: 2px solid #f0c86a;
     box-shadow:
-        0 0 32px rgba(214,177,92,0.58),
-        0 0 64px rgba(100,36,24,0.48),
-        inset 0 0 42px rgba(0,0,0,0.78);
+        0 0 32px rgba(240,200,106,0.52),
+        0 0 64px rgba(60,130,220,0.45),
+        inset 0 0 42px rgba(0,0,0,0.82);
 }
 
 .boss-icon{
@@ -230,49 +252,46 @@ body {
     pointer-events: none;
 }
 
-/* Tier 1 — Lord of Liquidity */
+/* Tier 1 — Demand Cartographer */
 .boss10 .boss-icon{
     filter:
-        drop-shadow(0 0 6px rgba(214,177,92,0.85))
-        drop-shadow(0 0 12px rgba(65,95,78,0.55));
+        drop-shadow(0 0 6px rgba(240,200,106,0.85))
+        drop-shadow(0 0 12px rgba(70,140,220,0.55));
 }
 
-/* Tier 2 — Keeper of the Steady State */
+/* Tier 2 — Rate Engineer */
 .boss20 .boss-icon{
     filter:
-        drop-shadow(0 0 8px rgba(196,106,58,0.9))
-        drop-shadow(0 0 16px rgba(99,35,24,0.65));
+        drop-shadow(0 0 8px rgba(110,180,255,0.9))
+        drop-shadow(0 0 18px rgba(240,200,106,0.55));
 }
 
-/* Tier 3 — Sovereign of Shocks */
+/* Tier 3 — Shock Forecaster */
 .boss30 .boss-icon{
     filter:
-        drop-shadow(0 0 10px rgba(240,199,94,1))
+        drop-shadow(0 0 10px rgba(240,200,106,1))
         drop-shadow(0 0 24px rgba(127,29,29,0.85));
 }
 
-/* Damage effect when boss/player is hit (visual feedback) */
 .hit {
     box-shadow:
         0 0 60px rgba(127,29,29,0.95),
-        0 0 28px rgba(240,199,94,0.35),
-        inset 0 0 42px rgba(88,28,24,0.85) !important;
+        0 0 28px rgba(240,200,106,0.35),
+        inset 0 0 42px rgba(80,10,18,0.85) !important;
     animation: hitshake 0.4s ease;
 }
 
-/* Autosave indicator — positioned relative to gameBox */
 #autosave {
     position: absolute;
     top: 15px;
     right: 15px;
     font-size: 11px;
-    opacity: 0.48;
+    opacity: 0.5;
     font-style: italic;
-    color: #d8c7a0;
-    text-shadow: 0 0 6px rgba(214,177,92,0.35);
+    color: #c9d4e6;
+    text-shadow: 0 0 6px rgba(100,170,255,0.38);
 }
 
-/* Adds a graph box for questions with graphs */
 #questionImageBox{
   margin: 0 auto 12px auto;
   text-align: center;
@@ -284,10 +303,10 @@ body {
   width: 420px;
   height: auto;
   border-radius: 10px;
-  border: 1px solid rgba(214,177,92,0.22);
+  border: 1px solid rgba(240,200,106,0.24);
   box-shadow:
-    0 0 14px rgba(214,177,92,0.16),
-    0 0 28px rgba(0,0,0,0.65);
+    0 0 14px rgba(80,140,220,0.22),
+    0 0 28px rgba(0,0,0,0.68);
 }
 
 /* =========================================
@@ -296,99 +315,93 @@ body {
 
 h2 {
     text-shadow:
-        0 0 10px rgba(244,213,141,0.24),
-        0 0 20px rgba(214,177,92,0.22),
+        0 0 10px rgba(180,210,255,0.24),
+        0 0 20px rgba(80,140,220,0.22),
         0 2px 6px rgba(0,0,0,0.85);
     margin-bottom: 5px;
 }
 
-/* Main question text — keep readable and centered */
 #question {
     font-size: clamp(20px, 4vw, 22px);
     line-height: 1.4;
     font-weight: 600;
     margin: 14px 0;
-    color: #f3ead2;
+    color: #e6ecf5;
     text-shadow:
-        0 2px 5px rgba(0,0,0,0.85),
-        0 0 8px rgba(214,177,92,0.12);
+        0 2px 5px rgba(0,0,0,0.88),
+        0 0 8px rgba(100,170,255,0.14);
 }
 
-/* Boss/summary title — high emphasis text */
 .boss-title {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 15px;
     display: block;
-    color: #f4d58d;
+    color: #f0c86a;
     text-shadow:
-        0 0 10px rgba(240,199,94,0.62),
-        0 0 26px rgba(127,29,29,0.42),
+        0 0 10px rgba(240,200,106,0.62),
+        0 0 26px rgba(80,140,220,0.42),
         0 3px 8px rgba(0,0,0,0.9);
 }
 
-/* Area/zone label — subtle contextual info */
 .area-title {
-    color: #b9a879;
+    color: #8fb6e6;
     font-size: 14px;
     letter-spacing: 3px;
     text-transform: uppercase;
     margin-bottom: 15px;
     text-shadow:
-        0 0 8px rgba(214,177,92,0.18),
+        0 0 8px rgba(100,170,255,0.22),
         0 2px 5px rgba(0,0,0,0.85);
 }
 
-/* Boss summary text — left-aligned for readability */
 .boss-q {
     font-style: normal;
     line-height: 1.5;
     font-size: 24px;
-    border-left: 3px solid #8a3a24;
+    border-left: 3px solid #f0c86a;
     padding-left: 15px;
     margin: 20px 0;
     text-align: left;
-    color: #f3ead2;
-    box-shadow: -4px 0 12px rgba(127,29,29,0.34);
-    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    color: #e6ecf5;
+    box-shadow: -4px 0 12px rgba(80,140,220,0.34);
+    text-shadow: 0 2px 5px rgba(0,0,0,0.85);
 }
 
-/* Optional hint display calculation or guidance */
 .hint-box {
     font-size: 13px;
-    color: #d6b15c;
+    color: #f0c86a;
     margin-top: 15px;
-    opacity: 0.82;
+    opacity: 0.84;
     height: 18px;
-    text-shadow: 0 0 6px rgba(214,177,92,0.25);
+    text-shadow: 0 0 6px rgba(240,200,106,0.28);
 }
     
-/* Temporary feedback text auto fades out */
 .fade-out-text {
     animation: fadeOut 5s forwards;
     font-weight: bold;
-    color: #f0c75e;
+    color: #f0c86a;
     text-shadow:
-        0 0 8px rgba(240,199,94,0.55),
+        0 0 8px rgba(240,200,106,0.55),
+        0 0 18px rgba(80,140,220,0.28),
         0 2px 5px rgba(0,0,0,0.85);
 }
 
-/* Add styling to banker text */
 #message {
     margin-top: 10px;
     font-style: italic;
     letter-spacing: 0.5px;
     text-align: center;
-    color: #d8c7a0;
+    color: #c9d4e6;
     opacity: 0.9;
     text-shadow:
-        0 0 7px rgba(214,177,92,0.18),
+        0 0 7px rgba(100,170,255,0.22),
         0 2px 5px rgba(0,0,0,0.85);
 }
 
-/* Mint of Ash and Gold override */
-.mint #message {
-    color: #d6b15c;
+/* Command Nexus override */
+.nexus #message {
+    color: #9fc7f5;
     font-size: 17px;
     font-style: italic;
     margin-top: 12px;
@@ -396,11 +409,10 @@ h2 {
     font-weight: 600;
     letter-spacing: 1px;
     text-shadow:
-        0 0 8px rgba(214,177,92,0.42),
-        0 0 18px rgba(100,36,24,0.25),
+        0 0 8px rgba(100,170,255,0.45),
+        0 0 18px rgba(240,200,106,0.18),
         0 2px 6px rgba(0,0,0,0.85);
 }
-   
 /* =========================================
    4. BUTTONS & INTERACTION — SAFE TO CUSTOMIZE
 ========================================= */
@@ -412,39 +424,36 @@ button {
     font-size: 16px;
     cursor: pointer;
 
-    background: linear-gradient(180deg, #5b3a1f, #1b1711);
-    color: #f3ead2;
+    background: linear-gradient(180deg, #12345a, #07111f);
+    color: #e6ecf5;
 
-    border: 1px solid rgba(214,177,92,0.42);
+    border: 1px solid rgba(240,200,106,0.38);
     border-radius: 8px;
 
     box-shadow:
-       0 0 12px rgba(214,177,92,0.24),
-       0 0 24px rgba(88,28,24,0.18),
-       inset 0 0 10px rgba(0,0,0,0.62);
+       0 0 12px rgba(80,140,220,0.28),
+       0 0 24px rgba(10,45,95,0.22),
+       inset 0 0 10px rgba(0,0,0,0.68);
 
     transition: all 0.15s ease;
 }
 
-/* Hover feedback — improves interactivity */
 button:hover {
-    background: linear-gradient(180deg, #7a4a25, #2a1b12);
-    border-color: rgba(240,199,94,0.7);
+    background: linear-gradient(180deg, #1b4f86, #0b1f38);
+    border-color: rgba(240,200,106,0.72);
 
     box-shadow:
-        0 0 18px rgba(240,199,94,0.48),
-        0 0 34px rgba(127,29,29,0.28),
-        inset 0 0 12px rgba(0,0,0,0.68);
+        0 0 18px rgba(100,170,255,0.5),
+        0 0 34px rgba(240,200,106,0.22),
+        inset 0 0 12px rgba(0,0,0,0.7);
 
     transform: translateY(-2px) scale(1.02);
 }
 
-/* Click feedback — simulates button press */
 button:active {
     transform: scale(0.96);
 }
 
-/* Answer container — controls layout of choices */
 .answers {
     display: flex;
     flex-direction: column;
@@ -453,7 +462,6 @@ button:active {
     width: 100%;
 }
 
-/* Individual answer buttons — flexible sizing */
 .answers button {
     flex: 1 1 100%;
     min-height: 60px;
@@ -463,33 +471,31 @@ button:active {
     margin: 0;
 
     background: linear-gradient(180deg,
-        rgba(50,76,58,0.98),
-        rgba(12,24,20,0.98));
+        rgba(18,54,92,0.98),
+        rgba(7,18,34,0.98));
 
-    color: #f3ead2;
-    border: 1px solid rgba(214,177,92,0.34);
+    color: #e6ecf5;
+    border: 1px solid rgba(120,180,255,0.34);
 
     box-shadow:
-        0 0 10px rgba(214,177,92,0.16),
-        0 0 18px rgba(65,95,78,0.16),
+        0 0 10px rgba(80,140,220,0.18),
+        0 0 18px rgba(240,200,106,0.12),
+        inset 0 0 14px rgba(0,0,0,0.74);
+}
+
+.answers button:hover {
+    background: linear-gradient(180deg,
+        rgba(28,82,135,0.98),
+        rgba(10,34,62,0.98));
+
+    border-color: rgba(240,200,106,0.68);
+
+    box-shadow:
+        0 0 18px rgba(100,170,255,0.42),
+        0 0 34px rgba(240,200,106,0.22),
         inset 0 0 14px rgba(0,0,0,0.7);
 }
 
-/* Answer hover — green vault glow */
-.answers button:hover {
-    background: linear-gradient(180deg,
-        rgba(68,105,76,0.98),
-        rgba(24,46,34,0.98));
-
-    border-color: rgba(240,199,94,0.68);
-
-    box-shadow:
-        0 0 18px rgba(214,177,92,0.38),
-        0 0 34px rgba(65,120,82,0.35),
-        inset 0 0 14px rgba(0,0,0,0.68);
-}
-
-/* Utility button fullscreen toggle */
 .fullscreenBtn {
     position: absolute;
     top: 12px;
@@ -500,63 +506,63 @@ button:active {
     letter-spacing: 1px;
     text-transform: uppercase;
 
-    color: #f3ead2;
-    background: linear-gradient(180deg, #4a3320, #11100d);
+    color: #e6ecf5;
+    background: linear-gradient(180deg, #102c4d, #050b14);
 
-    border: 1px solid rgba(214,177,92,0.34);
+    border: 1px solid rgba(120,180,255,0.34);
     border-radius: 6px;
     cursor: pointer;
 
     box-shadow:
-        0 0 10px rgba(214,177,92,0.22),
-        inset 0 0 7px rgba(0,0,0,0.72);
+        0 0 10px rgba(80,140,220,0.28),
+        inset 0 0 7px rgba(0,0,0,0.76);
 
     transition: all 0.15s ease;
 }
 
 .fullscreenBtn:hover {
-    background: linear-gradient(180deg, #6a4726, #1c1510);
-    border-color: rgba(240,199,94,0.62);
+    background: linear-gradient(180deg, #1a4d82, #0b1d34);
+    border-color: rgba(240,200,106,0.62);
 
     box-shadow:
-        0 0 16px rgba(214,177,92,0.42),
-        inset 0 0 8px rgba(0,0,0,0.72);
+        0 0 16px rgba(100,170,255,0.44),
+        inset 0 0 8px rgba(0,0,0,0.74);
 }
 
 .fullscreenBtn:active {
     transform: scale(0.95);
     box-shadow:
-        0 0 8px rgba(214,177,92,0.28),
-        inset 0 0 10px rgba(0,0,0,0.85);
+        0 0 8px rgba(80,140,220,0.3),
+        inset 0 0 10px rgba(0,0,0,0.86);
 }
 
 .continue-btn {
-    background: linear-gradient(180deg, #8a4f25, #3a1f14);
-    color: #f3ead2;
+    background: linear-gradient(180deg, #1b5b98, #09213d);
+    color: #e6ecf5;
     font-weight: bold;
 
     padding: 14px 40px;
     font-size: 18px;
     border-radius: 8px;
 
-    border: 1px solid rgba(240,199,94,0.52);
+    border: 1px solid rgba(240,200,106,0.54);
     cursor: pointer;
 
     box-shadow:
-        0 0 16px rgba(214,177,92,0.38),
-        0 0 34px rgba(127,29,29,0.28),
-        inset 0 0 12px rgba(0,0,0,0.65);
+        0 0 16px rgba(100,170,255,0.42),
+        0 0 34px rgba(240,200,106,0.22),
+        inset 0 0 12px rgba(0,0,0,0.68);
 
     transition: all 0.15s ease;
 }
 
 .continue-btn:hover {
-    background: linear-gradient(180deg, #a7632c, #5b2a19);
+    background: linear-gradient(180deg, #2470b8, #0f355f);
 
     box-shadow:
-        0 0 24px rgba(240,199,94,0.58),
-        0 0 42px rgba(127,29,29,0.36),
-        inset 0 0 12px rgba(0,0,0,0.65);
+        0 0 24px rgba(100,170,255,0.62),
+        0 0 42px rgba(240,200,106,0.28),
+        inset 0 0 12px rgba(0,0,0,0.68);
 
     transform: scale(1.03);
 }
@@ -564,52 +570,48 @@ button:active {
 #continueBtn:active {
     transform: scale(0.97);
     box-shadow:
-        0 0 10px rgba(214,177,92,0.28),
-        inset 0 0 10px rgba(0,0,0,0.75);
+        0 0 10px rgba(80,140,220,0.32),
+        inset 0 0 10px rgba(0,0,0,0.78);
 }
-
 /* =========================================
    5. PROGRESS & MAZE TRACK — SAFE TO CUSTOMIZE (WITH RULES)
 ========================================= */
     
-/* Progress bar container — background track */
 #progressBar {
     width: 100%;
     height: 22px;
 
     background: linear-gradient(180deg,
-        rgba(12,18,18,0.95),
-        rgba(4,5,5,0.98));
+        rgba(6,14,28,0.96),
+        rgba(2,5,12,0.98));
 
     border-radius: 12px;
     margin-bottom: 20px;
     overflow: hidden;
 
-    border: 1px solid rgba(214,177,92,0.22);
+    border: 1px solid rgba(120,180,255,0.24);
 
     box-shadow:
-        inset 0 0 12px rgba(0,0,0,0.82),
-        0 0 10px rgba(214,177,92,0.12);
+        inset 0 0 12px rgba(0,0,0,0.84),
+        0 0 10px rgba(80,140,220,0.18);
 }
     
-/* Progress fill — width controlled by JS */
 #progressFill {
     height: 100%;
     width: 0%;
 
     background: linear-gradient(90deg,
-        #2f4f43,
-        #d6b15c,
-        #8a3a24);
+        #123a66,
+        #4f9fe8,
+        #f0c86a);
 
     box-shadow:
-        0 0 12px rgba(214,177,92,0.45),
-        0 0 22px rgba(127,29,29,0.25);
+        0 0 12px rgba(100,170,255,0.46),
+        0 0 22px rgba(240,200,106,0.26);
 
     transition: width 0.4s ease;
 }
 
-/* Maze grid layout — 10 columns = 30 total rooms */
 #mazeTrack {
     display: grid;
     grid-template-columns: repeat(10, 36px);
@@ -618,7 +620,6 @@ button:active {
     margin: 25px auto;
 }
     
-/* Individual room cell — default state */
 .maze-box {
     width: 36px;
     height: 36px;
@@ -631,79 +632,77 @@ button:active {
     border-radius: 6px;
 
     background: linear-gradient(180deg,
-        rgba(22,30,28,0.72),
-        rgba(7,9,9,0.86));
+        rgba(10,24,46,0.76),
+        rgba(3,8,18,0.9));
 
-    border: 1px solid rgba(214,177,92,0.18);
+    border: 1px solid rgba(120,180,255,0.18);
 
     box-shadow:
-        inset 0 0 10px rgba(0,0,0,0.72),
-        0 0 5px rgba(214,177,92,0.08);
+        inset 0 0 10px rgba(0,0,0,0.76),
+        0 0 5px rgba(80,140,220,0.1);
 
     transition: all 0.3s ease;
 }
 
-/* Current room highlight — animated pulse */
 .maze-box.active {
     background: radial-gradient(circle,
-        rgba(214,177,92,0.48),
-        rgba(65,95,78,0.36),
-        rgba(12,18,18,0.92));
+        rgba(100,170,255,0.48),
+        rgba(18,58,102,0.42),
+        rgba(3,8,18,0.94));
 
-    border: 2px solid #f0c75e;
+    border: 2px solid #f0c86a;
 
     box-shadow:
-        0 0 12px rgba(240,199,94,0.78),
-        0 0 24px rgba(214,177,92,0.48),
-        inset 0 0 12px rgba(0,0,0,0.62);
+        0 0 12px rgba(100,170,255,0.78),
+        0 0 24px rgba(240,200,106,0.36),
+        inset 0 0 12px rgba(0,0,0,0.66);
 
     z-index: 10;
     animation: activePulse 1s infinite alternate;
 }
 
-/* Completed tile */
 .maze-box.completed {
     background: linear-gradient(180deg,
-        rgba(65,95,78,0.62),
-        rgba(20,31,28,0.88));
+        rgba(24,82,135,0.62),
+        rgba(8,24,44,0.9));
 
-    border-color: rgba(214,177,92,0.38);
+    border-color: rgba(240,200,106,0.36);
 
     box-shadow:
-        0 0 8px rgba(214,177,92,0.28),
-        inset 0 0 10px rgba(0,0,0,0.7);
+        0 0 8px rgba(80,140,220,0.32),
+        inset 0 0 10px rgba(0,0,0,0.72);
 }
 
-/* Boss room highlights 10, 20, 30 — visual only */
+/* Boss room highlights: 10 Demand, 20 Rate, 30 Shock */
 .maze-box:nth-child(10) {
     text-shadow:
-        0 0 8px #d6b15c,
-        0 0 18px rgba(65,95,78,0.8);
+        0 0 8px #f0c86a,
+        0 0 18px rgba(80,140,220,0.78);
 }
 
 .maze-box:nth-child(20) {
     text-shadow:
-        0 0 8px #c46a3a,
-        0 0 18px rgba(127,29,29,0.75);
+        0 0 8px #6eb4ff,
+        0 0 18px rgba(240,200,106,0.58);
 }
 
 .maze-box:nth-child(30) {
     text-shadow:
-        0 0 10px #f0c75e,
-        0 0 24px rgba(127,29,29,0.95),
-        0 0 34px rgba(214,177,92,0.42);
+        0 0 10px #f0c86a,
+        0 0 24px rgba(127,29,29,0.9),
+        0 0 34px rgba(80,140,220,0.35);
 }
 
-/* Streak styling — Mint of Ash and Gold */
+/* Streak styling — Command Nexus */
 .streak {
     display:inline-flex;
     align-items:center;
     gap:10px;
     font-weight:600;
     letter-spacing:0.5px;
-    color: rgba(243,234,210,0.94);
+    color: rgba(230,236,245,0.95);
     text-shadow:
-        0 0 7px rgba(214,177,92,0.32),
+        0 0 7px rgba(100,170,255,0.34),
         0 2px 5px rgba(0,0,0,0.85);
 }
 
@@ -714,12 +713,12 @@ button:active {
     border-radius:50%;
 
     filter:
-        drop-shadow(0 0 8px rgba(214,177,92,0.75))
-        drop-shadow(0 0 15px rgba(100,36,24,0.52));
+        drop-shadow(0 0 8px rgba(100,170,255,0.76))
+        drop-shadow(0 0 15px rgba(240,200,106,0.42));
 
     background: radial-gradient(circle,
-        rgba(240,199,94,0.46) 0%,
-        rgba(65,95,78,0.34) 45%,
+        rgba(100,170,255,0.48) 0%,
+        rgba(240,200,106,0.28) 42%,
         transparent 72%);
 
     animation: pulseControl 2.2s ease-in-out infinite;
@@ -729,28 +728,26 @@ button:active {
    6. ARTIFACT SYSTEM (REWARDS) — SAFE TO CUSTOMIZE
 ========================================= */
     
-/* Reward popup — appears after boss victory */
 #artifactDrop {
     margin-top: 20px;
     padding: 14px;
 
     background: radial-gradient(circle at center,
-        rgba(65,95,78,0.34),
-        rgba(12,18,18,0.96) 62%,
-        rgba(4,5,5,0.98));
+        rgba(24,82,135,0.36),
+        rgba(6,14,28,0.96) 62%,
+        rgba(2,5,12,0.98));
 
     border-radius: 10px;
-    border: 1px solid rgba(214,177,92,0.34);
+    border: 1px solid rgba(240,200,106,0.34);
 
     box-shadow:
-        0 0 22px rgba(214,177,92,0.28),
-        0 0 42px rgba(127,29,29,0.22),
-        inset 0 0 28px rgba(0,0,0,0.76);
+        0 0 22px rgba(100,170,255,0.3),
+        0 0 42px rgba(240,200,106,0.18),
+        inset 0 0 28px rgba(0,0,0,0.78);
 
     text-align: center;
 }
     
-/* Artifact image in popup */
 #artifactImage {
     width: 96px;
     margin-bottom: 8px;
@@ -758,11 +755,10 @@ button:active {
 
 #artifactDrop img {
     filter:
-        drop-shadow(0 0 14px rgba(240,199,94,0.82))
-        drop-shadow(0 0 26px rgba(127,29,29,0.42));
+        drop-shadow(0 0 14px rgba(100,170,255,0.82))
+        drop-shadow(0 0 26px rgba(240,200,106,0.34));
 }
 
-/* Persistent artifact collection display top panel */
 #artifactVault {
     margin-top: -6px;
     width: 220px;
@@ -770,28 +766,28 @@ button:active {
     border-radius: 12px;
 
     background: radial-gradient(circle at top,
-        rgba(65,95,78,0.42),
-        rgba(12,18,18,0.96) 58%,
-        rgba(4,5,5,0.98));
+        rgba(24,82,135,0.42),
+        rgba(6,14,28,0.96) 58%,
+        rgba(2,5,12,0.98));
 
-    border: 1px solid rgba(214,177,92,0.3);
+    border: 1px solid rgba(120,180,255,0.28);
 
     box-shadow:
-        0 0 20px rgba(214,177,92,0.22),
-        0 0 38px rgba(88,28,24,0.20),
-        inset 0 0 30px rgba(0,0,0,0.76);
+        0 0 20px rgba(80,140,220,0.26),
+        0 0 38px rgba(240,200,106,0.14),
+        inset 0 0 30px rgba(0,0,0,0.78);
 
     text-align: center;
 }
 
 #artifactVault h3 {
-    color: #f4d58d;
+    color: #f0c86a;
     text-shadow:
-        0 0 10px rgba(214,177,92,0.52),
+        0 0 10px rgba(240,200,106,0.48),
+        0 0 18px rgba(100,170,255,0.22),
         0 2px 6px rgba(0,0,0,0.85);
 }
 
-/* Layout container for artifact slots */
 .vaultRow {
     display: flex;
     justify-content: center;
@@ -800,7 +796,6 @@ button:active {
     flex-wrap:wrap;
 }
 
-/* Individual artifact slot default locked state */    
 .artifactSlot {
     display: flex;
     flex-direction: column;
@@ -814,29 +809,26 @@ button:active {
     transition: all .4s ease;
 }
 
-/* Locked artifact image dimmed effect */    
 .artifactSlot img {
     width: 45px;
     margin-bottom:4px;
 
     filter:
         brightness(0.28)
-        contrast(0.85)
-        sepia(0.35);
+        contrast(0.86)
+        saturate(0.75);
 
     transition: all .4s ease;
 }
 
-/* Artifact label text */
 .artifactSlot span {
     display: block;
     font-size: 13px;
-    color: rgba(216,199,160,0.38);
+    color: rgba(180,200,230,0.42);
     margin-top: 8px;
     line-height: 1.2;
 }
 
-/* Glow + animation for unlocked artifacts */
 .artifactSlot.unlocked {
     opacity: 1;
     transform: scale(1.05);
@@ -844,9 +836,9 @@ button:active {
 
 .artifactSlot.unlocked img {
     filter:
-        drop-shadow(0 0 14px rgba(240,199,94,0.86))
-        drop-shadow(0 0 26px rgba(214,177,92,0.46))
-        drop-shadow(0 0 34px rgba(127,29,29,0.24));
+        drop-shadow(0 0 14px rgba(100,170,255,0.86))
+        drop-shadow(0 0 26px rgba(240,200,106,0.42))
+        drop-shadow(0 0 34px rgba(80,140,220,0.24));
 
     animation: relicPulse 2.5s ease-in-out infinite;
     backface-visibility: hidden;
@@ -854,10 +846,11 @@ button:active {
 }
 
 .artifactSlot.unlocked span {
-    color: #f3ead2;
+    color: #e6ecf5;
     font-weight: 600;
     text-shadow:
-        0 0 7px rgba(214,177,92,0.38),
+        0 0 7px rgba(100,170,255,0.38),
+        0 0 14px rgba(240,200,106,0.18),
         0 2px 5px rgba(0,0,0,0.85);
 }
 
@@ -865,12 +858,10 @@ button:active {
    7. BOSS EFFECTS & ATMOSPHERE — SAFE TO CUSTOMIZE
 ========================================= */
     
-/* Hit animation — triggered when boss takes damage */
 .boss-shake {
     animation: bossShake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
 
-/* Boss image display — includes floating animation */
 .bossIcon {
     width: 96px;
     height: auto;
@@ -879,30 +870,31 @@ button:active {
     animation: bossFloat 4s ease-in-out infinite;
 }
 
-/* Boss-specific glow effects */
-.liquidityGlow {
+/* Boss 1 — The Demand Cartographer */
+.cartographerGlow {
     filter:
-        drop-shadow(0 0 12px rgba(214,177,92,0.84))
-        drop-shadow(0 0 24px rgba(65,95,78,0.58))
-        drop-shadow(0 0 34px rgba(0,0,0,0.78));
+        drop-shadow(0 0 12px rgba(240,200,106,0.82))
+        drop-shadow(0 0 24px rgba(80,140,220,0.58))
+        drop-shadow(0 0 34px rgba(0,0,0,0.8));
 }
 
-.steadyStateGlow {
+/* Boss 2 — The Rate Engineer */
+.rateEngineerGlow {
     filter:
-        drop-shadow(0 0 14px rgba(196,106,58,0.86))
-        drop-shadow(0 0 28px rgba(92,64,36,0.62))
-        drop-shadow(0 0 38px rgba(0,0,0,0.80));
+        drop-shadow(0 0 14px rgba(110,180,255,0.88))
+        drop-shadow(0 0 28px rgba(240,200,106,0.44))
+        drop-shadow(0 0 38px rgba(0,0,0,0.82));
 }
 
-.shockSovereignGlow {
+/* Boss 3 — The Shock Forecaster */
+.shockForecasterGlow {
     filter:
-        drop-shadow(0 0 16px rgba(240,199,94,0.96))
-        drop-shadow(0 0 34px rgba(127,29,29,0.74))
-        drop-shadow(0 0 46px rgba(214,177,92,0.34))
-        drop-shadow(0 0 52px rgba(0,0,0,0.84));
+        drop-shadow(0 0 16px rgba(240,200,106,0.96))
+        drop-shadow(0 0 34px rgba(127,29,29,0.76))
+        drop-shadow(0 0 46px rgba(80,140,220,0.26))
+        drop-shadow(0 0 52px rgba(0,0,0,0.86));
 }
 
-/* Ambient torch effect — decorative, shown during gameplay */
 .torch {
     position: absolute;
     width: 70px;
@@ -910,16 +902,15 @@ button:active {
     z-index: 10;
     animation: torchFlicker 3s infinite alternate;
     pointer-events: none;
-    opacity: .92;
+    opacity: .9;
 
     filter:
-        drop-shadow(0 0 12px rgba(240,199,94,0.68))
-        drop-shadow(0 0 24px rgba(127,29,29,0.26));
+        drop-shadow(0 0 12px rgba(100,170,255,0.54))
+        drop-shadow(0 0 24px rgba(240,200,106,0.24));
 
     display:none;
 }
 
-/* Torch positioning left/right sides of screen */
 .left-torch {
     left: 18px;
 }
@@ -928,20 +919,18 @@ button:active {
     right: 18px;
     transform: scaleX(-1);
 }
-
 /* =========================================
    8. FULLSCREEN SCREENS & TRANSITIONS — SAFE TO CUSTOMIZE
 ========================================= */
 
-/* Fullscreen start screen — shown before game begins */    
 #startScreen{
   position: fixed;
   inset: 0;
 
   background-image:
     linear-gradient(
-        rgba(4,5,5,0.22),
-        rgba(4,5,5,0.46)
+        rgba(2,5,12,0.26),
+        rgba(2,5,12,0.52)
     ),
     url('start screen image.png');
 
@@ -961,7 +950,6 @@ button:active {
   box-sizing: border-box;
 }
 
-/* Transition overlay — appears between rooms controlled by JS */
 #hallwayTransition {
   position: fixed;
   top: 0;
@@ -972,8 +960,8 @@ button:active {
 
   background:
     linear-gradient(
-        rgba(4,5,5,0.64),
-        rgba(4,5,5,0.74)
+        rgba(2,5,12,0.66),
+        rgba(2,5,12,0.78)
     ),
     url('hallway1.png');
 
@@ -985,7 +973,7 @@ button:active {
   align-items: center;
   text-align: center;
 
-  color: #f3ead2;
+  color: #e6ecf5;
   font-size: 26px;
 
   z-index: 200;
@@ -996,34 +984,34 @@ button:active {
   animation: hallwayZoom 3.2s ease-out forwards;
 }
 
-/* Activates transition visibility DO NOT REMOVE */    
 #hallwayTransition.active {
   opacity: 1;
 }
 
-/* Text container for transition messages */
 #hallwayText {
   max-width: 600px;
 
   background: radial-gradient(circle at center,
-      rgba(65,95,78,0.30),
-      rgba(12,18,18,0.82) 58%,
-      rgba(4,5,5,0.92));
+      rgba(24,82,135,0.32),
+      rgba(6,14,28,0.84) 58%,
+      rgba(2,5,12,0.94));
 
   padding: 30px;
   border-radius: 10px;
 
-  border: 1px solid rgba(214,177,92,0.28);
+  border: 1px solid rgba(240,200,106,0.28);
 
   box-shadow:
-      0 0 24px rgba(0,0,0,0.82),
-      0 0 28px rgba(214,177,92,0.18),
-      inset 0 0 26px rgba(0,0,0,0.72);
+      0 0 24px rgba(0,0,0,0.84),
+      0 0 28px rgba(100,170,255,0.2),
+      0 0 42px rgba(240,200,106,0.12),
+      inset 0 0 26px rgba(0,0,0,0.74);
 
-  color: #f3ead2;
+  color: #e6ecf5;
 
   text-shadow:
-      0 0 8px rgba(214,177,92,0.26),
+      0 0 8px rgba(100,170,255,0.3),
+      0 0 16px rgba(240,200,106,0.14),
       0 2px 6px rgba(0,0,0,0.9);
 }
 
@@ -1031,112 +1019,117 @@ button:active {
    9. ANIMATION SYSTEM — SAFE TO CUSTOMIZE (WITH CARE)
 ========================================= */
 
-/* Ambient lighting effect environmental immersion */    
 @keyframes torchFlicker {
   0%, 100% {
     filter: brightness(1);
   }
+
   25% {
-    filter: brightness(1.05) saturate(1.04);
+    filter: brightness(1.05) saturate(1.05);
   }
+
   50% {
     filter: brightness(0.96) saturate(0.98);
   }
+
   75% {
-    filter: brightness(1.04) saturate(1.03);
+    filter: brightness(1.04) saturate(1.04);
   }
 }
 
-/* Damage feedback quick impact effect */    
 @keyframes hitshake {
   0% {
     transform: translateX(0);
   }
+
   25% {
     transform: translateX(-8px);
   }
+
   50% {
     transform: translateX(8px);
   }
+
   75% {
     transform: translateX(-6px);
   }
+
   100% {
     transform: translateX(0);
   }
 }
 
-/* Boss-specific hit feedback stronger shake */    
 @keyframes bossShake {
   10%, 90% {
     transform: translate3d(-1px, 0, 0);
   }
+
   20%, 80% {
     transform: translate3d(2px, 0, 0);
   }
+
   30%, 50%, 70% {
     transform: translate3d(-4px, 0, 0);
   }
+
   40%, 60% {
     transform: translate3d(4px, 0, 0);
   }
 }
 
-/* Current room highlight animation maze tracker */   
 @keyframes activePulse {
   0% {
     transform: scale(1.06);
     box-shadow:
-      0 0 8px rgba(214,177,92,0.68),
-      inset 0 0 10px rgba(0,0,0,0.6);
+      0 0 8px rgba(100,170,255,0.68),
+      inset 0 0 10px rgba(0,0,0,0.62);
   }
 
   45% {
     transform: scale(1.13);
     box-shadow:
-      0 0 18px rgba(240,199,94,0.92),
-      0 0 32px rgba(214,177,92,0.48),
-      0 0 42px rgba(65,95,78,0.24),
-      inset 0 0 12px rgba(0,0,0,0.64);
+      0 0 18px rgba(100,170,255,0.92),
+      0 0 32px rgba(240,200,106,0.42),
+      0 0 42px rgba(24,82,135,0.3),
+      inset 0 0 12px rgba(0,0,0,0.66);
   }
 
   70% {
     transform: scale(1.09);
     box-shadow:
-      0 0 12px rgba(214,177,92,0.78),
-      0 0 24px rgba(127,29,29,0.24),
-      inset 0 0 11px rgba(0,0,0,0.64);
+      0 0 12px rgba(100,170,255,0.78),
+      0 0 24px rgba(240,200,106,0.22),
+      inset 0 0 11px rgba(0,0,0,0.66);
   }
 
   100% {
     transform: scale(1.11);
     box-shadow:
-      0 0 15px rgba(240,199,94,0.72),
-      0 0 30px rgba(214,177,92,0.36),
+      0 0 15px rgba(100,170,255,0.72),
+      0 0 30px rgba(240,200,106,0.32),
       inset 0 0 12px rgba(0,0,0,0.68);
   }
 }
 
-/* Victory text animation end screen emphasis */    
 @keyframes victoryGlow {
   0%, 100% {
     transform: scale(1);
     text-shadow:
-      0 0 10px rgba(240,199,94,0.72),
+      0 0 10px rgba(240,200,106,0.72),
+      0 0 18px rgba(100,170,255,0.24),
       0 2px 6px rgba(0,0,0,0.9);
   }
 
   50% {
     transform: scale(1.08);
     text-shadow:
-      0 0 24px rgba(240,199,94,0.95),
-      0 0 42px rgba(214,177,92,0.62),
-      0 0 52px rgba(127,29,29,0.36),
+      0 0 24px rgba(240,200,106,0.95),
+      0 0 42px rgba(100,170,255,0.58),
+      0 0 52px rgba(24,82,135,0.38),
       0 3px 8px rgba(0,0,0,0.9);
   }
 }
 
-/* Idle boss movement subtle hovering effect */    
 @keyframes bossFloat {
   0%, 100% {
     transform: translateY(0);
@@ -1147,7 +1140,6 @@ button:active {
   }
 }
 
-/* Temporary feedback text fade-out */   
 @keyframes fadeOut {
   0%, 70% {
     opacity: 1;
@@ -1158,7 +1150,6 @@ button:active {
   }
 }
 
-/* Wizard idle animation subtle movement */    
 @keyframes wizardFloat {
   0%,100% {
     transform: translateY(0);
@@ -1169,7 +1160,6 @@ button:active {
   }
 }
 
-/* General UI entrance animation */    
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1182,26 +1172,24 @@ button:active {
   }
 }
 
-/* General pulse animation for relics */   
 @keyframes relicPulse {
   0%,100% {
     transform: scale(1.05);
     filter:
-      drop-shadow(0 0 8px rgba(214,177,92,0.66))
-      drop-shadow(0 0 18px rgba(65,95,78,0.34))
-      drop-shadow(0 0 24px rgba(0,0,0,0.55));
+      drop-shadow(0 0 8px rgba(100,170,255,0.68))
+      drop-shadow(0 0 18px rgba(240,200,106,0.32))
+      drop-shadow(0 0 24px rgba(0,0,0,0.58));
   }
 
   50% {
     transform: scale(1.1);
     filter:
-      drop-shadow(0 0 16px rgba(240,199,94,0.92))
-      drop-shadow(0 0 30px rgba(214,177,92,0.55))
-      drop-shadow(0 0 38px rgba(127,29,29,0.24));
+      drop-shadow(0 0 16px rgba(100,170,255,0.94))
+      drop-shadow(0 0 30px rgba(240,200,106,0.48))
+      drop-shadow(0 0 38px rgba(24,82,135,0.26));
   }
 }
 
-/* Streak Icon Glow */
 @keyframes pulseControl {
   0%,100% {
     transform: scale(1);
@@ -1230,15 +1218,15 @@ button:active {
     margin:0 auto 10px auto;
 }
    
-/* Title above maze */
 .top-title{
     font-size:22px;
     font-weight:bold;
-    color:#f4d58d;
+    color:#f0c86a;
     text-align:center;
     margin-bottom:6px;
     text-shadow:
-        0 0 10px rgba(214,177,92,0.45),
+        0 0 10px rgba(240,200,106,0.42),
+        0 0 18px rgba(100,170,255,0.22),
         0 2px 6px rgba(0,0,0,0.9);
 }
    
@@ -1254,7 +1242,6 @@ button:active {
     padding:10px 14px;
 }
 
-/* Main horizontal layout: banker + game area */
 .main-panel{
     display:flex;
     gap:20px;
@@ -1263,7 +1250,6 @@ button:active {
     align-items: stretch;
 }
    
-/* Core game container — controls overall layout and spacing */
 #gameShell{
     display:flex;
     gap:20px;
@@ -1273,23 +1259,22 @@ button:active {
 
     background: linear-gradient(
         180deg,
-        rgba(18,24,24,0.96),
-        rgba(4,5,5,0.98)
+        rgba(6,14,28,0.96),
+        rgba(2,5,12,0.98)
     );
 
     padding:20px;
     border-radius:16px;
 
-    border:1px solid rgba(214,177,92,0.28);
+    border:1px solid rgba(120,180,255,0.26);
 
     box-shadow:
        0 0 30px rgba(0,0,0,0.92),
-       0 0 58px rgba(214,177,92,0.16),
-       0 0 76px rgba(88,28,24,0.16),
-       inset 0 0 42px rgba(0,0,0,0.74);
+       0 0 58px rgba(80,140,220,0.18),
+       0 0 76px rgba(240,200,106,0.10),
+       inset 0 0 42px rgba(0,0,0,0.76);
 }
    
-/* Banker display panel — fixed width, do not remove flex settings */
 #wizardBox{
     width:160px;
     min-width:160px;
@@ -1297,8 +1282,8 @@ button:active {
 
     background: linear-gradient(
         180deg,
-        rgba(42,55,49,0.94),
-        rgba(8,10,10,0.98)
+        rgba(18,54,92,0.92),
+        rgba(4,10,20,0.98)
     );
 
     border-radius:12px;
@@ -1310,42 +1295,42 @@ button:active {
     align-items:center;    
     gap:6px;
 
-    border:1px solid rgba(214,177,92,0.26);
+    border:1px solid rgba(120,180,255,0.28);
 
     box-shadow:
-        inset 0 0 26px rgba(0,0,0,0.78),
-        0 0 18px rgba(214,177,92,0.12);
+        inset 0 0 26px rgba(0,0,0,0.8),
+        0 0 18px rgba(80,140,220,0.16),
+        0 0 30px rgba(240,200,106,0.08);
 }
 
-/* Banker name */
 #wizardName {
     font-size: 12px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #d6b15c; 
+    color: #9fc7f5; 
     margin-top: 4px;
     margin-bottom: 6px;
-    opacity: 0.9;
+    opacity: 0.92;
     text-align: center;
     font-weight: 600;
 
-    border-bottom: 1px solid rgba(214,177,92,0.34);
+    border-bottom: 1px solid rgba(240,200,106,0.32);
     padding-bottom: 2px;
 
     text-shadow:
-        0 0 6px rgba(214,177,92,0.48),
+        0 0 6px rgba(100,170,255,0.48),
+        0 0 12px rgba(240,200,106,0.16),
         0 2px 5px rgba(0,0,0,0.85);
 }
 
-/* Banker visual + floating animation */
 #wizardImage{
     width:100%;
     max-width:180px;
 
     filter:
-        drop-shadow(0 0 12px rgba(214,177,92,0.62))
-        drop-shadow(0 0 24px rgba(65,95,78,0.28))
-        drop-shadow(0 0 30px rgba(0,0,0,0.82));
+        drop-shadow(0 0 12px rgba(100,170,255,0.62))
+        drop-shadow(0 0 24px rgba(240,200,106,0.22))
+        drop-shadow(0 0 30px rgba(0,0,0,0.84));
 
     animation: wizardFloat 4s ease-in-out infinite, torchFlicker 5s infinite;
 }
@@ -1354,23 +1339,22 @@ button:active {
    11. BOSS MODE (UI STATE OVERRIDES) — DO NOT MODIFY STRUCTURE
 ========================================= */
 
-/* Center layout when banker is removed */
 .boss-mode #wizardBox{
     display:none;
 }
 
-/* Center and slightly constrain game area for boss mode */
 .boss-mode #gameBox{
     max-width:900px;
     width:90%;
     margin:0 auto;
 
-    border-color: rgba(240,199,94,0.72);
+    border-color: rgba(240,200,106,0.72);
 
     box-shadow:
-        0 0 34px rgba(240,199,94,0.42),
-        0 0 72px rgba(127,29,29,0.42),
-        inset 0 0 46px rgba(0,0,0,0.82);
+        0 0 34px rgba(100,170,255,0.46),
+        0 0 72px rgba(240,200,106,0.24),
+        0 0 92px rgba(127,29,29,0.22),
+        inset 0 0 46px rgba(0,0,0,0.84);
 }
 
 .boss-mode .bossIcon{
@@ -1381,17 +1365,16 @@ button:active {
     margin:10px auto;
 }
    
-/* Center game shell during boss encounters */
 .boss-mode #gameShell{
     justify-content:center;
 
-    border-color: rgba(240,199,94,0.42);
+    border-color: rgba(120,180,255,0.42);
 
     box-shadow:
        0 0 36px rgba(0,0,0,0.94),
-       0 0 64px rgba(214,177,92,0.24),
-       0 0 90px rgba(127,29,29,0.26),
-       inset 0 0 48px rgba(0,0,0,0.78);
+       0 0 64px rgba(80,140,220,0.26),
+       0 0 90px rgba(240,200,106,0.14),
+       inset 0 0 48px rgba(0,0,0,0.8);
 }
 
 /* =========================================
@@ -1900,15 +1883,15 @@ or simplify this section.
             <div class="vaultRow">
                 <div id="vaultAtlas" class="artifactSlot">
                     <img src="atlas.png">
-                    <span>Atlas of Demand</span>
+                    <span>The Atlas of Demand</span>
                 </div>
                 <div id="vaultDial" class="artifactSlot">
                     <img src="dial.png">
-                    <span>Calibrated Dial</span>
+                    <span>The Calibrated Dial</span>
                 </div>
                 <div id="vaultLens" class="artifactSlot">
                     <img src="lens.png">
-                    <span>Stabilizer's Lens</span>
+                    <span>The Stabilizer's Lens</span>
                 </div>
             </div>
         </div>
@@ -1920,7 +1903,7 @@ or simplify this section.
         <div id="gameShell">
             <div id="wizardBox">
                 <div id="wizardName">The Analyst</div>
-                <img src="banker.png" id="wizardImage">
+                <img src="analyst.png" id="wizardImage">
             </div>
 
             <!-- GAME -->
@@ -2232,93 +2215,97 @@ function inferObjective(question){
     const tag = (question.tag || "general").toLowerCase();
     const type = (question.type || "default").toLowerCase();
 
-    if(tag === "money" || tag === "money_creation" || tag === "banking"){
-        if(q.includes("money multiplier")) return "money_multiplier";
-        if(q.includes("required reserve") || q.includes("reserve requirement")) return "reserve_requirement";
-        if(q.includes("excess reserve")) return "excess_reserves";
-        if(q.includes("open market purchase") || q.includes("buys bonds")) return "open_market_purchase";
-        if(q.includes("open market sale") || q.includes("sells bonds")) return "open_market_sale";
-        if(q.includes("discount rate")) return "discount_rate";
-        if(q.includes("federal funds")) return "federal_funds_rate";
-        if(q.includes("money supply")) return "money_supply";
-        if(q.includes("bank")) return "banking_system";
-        if(q.includes("deposit")) return "deposit_creation";
-        if(q.includes("loan")) return "loan_creation";
-    }
+  // =============================================
+// COMMAND NEXUS OBJECTIVE INFERENCE
+// Chapters 12–13: IS-LM, shocks, policy, AD, Great Depression
+// =============================================
 
-    if(tag === "inflation" || tag === "prices"){
-        if(q.includes("quantity theory") || q.includes("mv = py") || q.includes("mv=py")) return "quantity_theory";
-        if(q.includes("velocity")) return "velocity";
-        if(q.includes("money neutrality") || q.includes("monetary neutrality")) return "monetary_neutrality";
-        if(q.includes("classical dichotomy")) return "classical_dichotomy";
-        if(q.includes("fisher effect")) return "fisher_effect";
-        if(q.includes("nominal interest") || q.includes("real interest")) return "nominal_real_interest";
-        if(q.includes("inflation tax")) return "inflation_tax";
-        if(q.includes("shoeleather")) return "shoeleather_costs";
-        if(q.includes("menu costs")) return "menu_costs";
-        if(q.includes("purchasing power")) return "purchasing_power";
-        if(q.includes("price level")) return "price_level";
-        if(q.includes("inflation")) return "inflation";
-    }
+if(tag === "is" || tag === "is_curve" || tag === "goods_market" || tag === "keynesian_cross" || tag === "loanable_funds"){
+    if(q.includes("keynesian cross") || q.includes("planned expenditure") || q.includes("expenditure")) return "LO12.1_keynesian_cross";
+    if(q.includes("loanable funds") || q.includes("saving") || q.includes("investment")) return "LO12.1_loanable_funds";
+    if(q.includes("is curve") || q.includes("is-curve")) return "LO12.1_is_curve";
+    if(q.includes("interest rate") && q.includes("investment")) return "LO12.1_interest_investment_link";
+    if(q.includes("fiscal policy") || q.includes("government purchases") || q.includes("government spending") || q.includes("tax")) return "LO12.1_fiscal_shift_is";
+    if(q.includes("shift right") || q.includes("rightward")) return "LO12.1_is_shift_right";
+    if(q.includes("shift left") || q.includes("leftward")) return "LO12.1_is_shift_left";
+    return "LO12.1_is_curve";
+}
 
-    if(tag === "growth" || tag === "solow" || tag === "economic_growth"){
-        if(q.includes("solow")) return "solow_model";
-        if(q.includes("steady state")) return "steady_state";
-        if(q.includes("golden rule")) return "golden_rule";
-        if(q.includes("capital accumulation")) return "capital_accumulation";
-        if(q.includes("depreciation")) return "depreciation";
-        if(q.includes("population growth")) return "population_growth";
-        if(q.includes("technological progress") || q.includes("technology")) return "technology_growth";
-        if(q.includes("productivity")) return "productivity";
-        if(q.includes("human capital")) return "human_capital";
-        if(q.includes("physical capital")) return "physical_capital";
-        if(q.includes("catch-up") || q.includes("catch up") || q.includes("convergence")) return "convergence";
-        if(q.includes("investment")) return "investment_growth";
-        if(q.includes("saving rate") || q.includes("savings rate")) return "saving_rate";
-    }
+if(tag === "lm" || tag === "lm_curve" || tag === "money_market" || tag === "liquidity_preference" || tag === "interest_rate"){
+    if(q.includes("liquidity preference") || q.includes("money demand")) return "LO12.2_liquidity_preference";
+    if(q.includes("money supply")) return "LO12.2_money_supply";
+    if(q.includes("lm curve") || q.includes("lm-curve")) return "LO12.2_lm_curve";
+    if(q.includes("income") && q.includes("money demand")) return "LO12.2_income_money_demand";
+    if(q.includes("interest rate") && q.includes("money demand")) return "LO12.2_interest_money_demand";
+    if(q.includes("open market purchase") || q.includes("buys bonds") || q.includes("monetary expansion")) return "LO12.2_monetary_expansion_lm";
+    if(q.includes("open market sale") || q.includes("sells bonds") || q.includes("monetary contraction")) return "LO12.2_monetary_contraction_lm";
+    if(q.includes("shift right") || q.includes("rightward")) return "LO12.2_lm_shift_right";
+    if(q.includes("shift left") || q.includes("leftward")) return "LO12.2_lm_shift_left";
+    return "LO12.2_lm_curve";
+}
 
-    if(tag === "aggregate_demand" || tag === "ad" || tag === "demand"){
-        if(q.includes("aggregate demand") || q.includes(" ad ")) return "aggregate_demand";
-        if(q.includes("wealth effect")) return "wealth_effect";
-        if(q.includes("interest-rate effect") || q.includes("interest rate effect")) return "interest_rate_effect";
-        if(q.includes("exchange-rate effect") || q.includes("exchange rate effect")) return "exchange_rate_effect";
-        if(q.includes("consumption")) return "consumption_shift";
-        if(q.includes("investment")) return "investment_shift";
-        if(q.includes("government purchases") || q.includes("government spending")) return "government_spending_shift";
-        if(q.includes("net exports")) return "net_exports_shift";
-        if(q.includes("right")) return "ad_shift_right";
-        if(q.includes("left")) return "ad_shift_left";
-    }
+if(tag === "is_lm" || tag === "islm" || tag === "equilibrium" || tag === "short_run_equilibrium"){
+    if(q.includes("intersection") || q.includes("equilibrium")) return "LO12.3_is_lm_equilibrium";
+    if(q.includes("income") && q.includes("interest rate")) return "LO12.3_income_interest_equilibrium";
+    if(q.includes("fixed price level") || q.includes("price level fixed")) return "LO12.3_fixed_price_level";
+    if(q.includes("short run")) return "LO12.3_short_run_equilibrium";
+    if(q.includes("output") && q.includes("interest rate")) return "LO12.3_output_interest_rate";
+    return "LO12.3_is_lm_equilibrium";
+}
 
-    if(tag === "aggregate_supply" || tag === "as" || tag === "sras" || tag === "lras" || tag === "supply"){
-        if(q.includes("short-run aggregate supply") || q.includes("sras")) return "short_run_aggregate_supply";
-        if(q.includes("long-run aggregate supply") || q.includes("lras")) return "long_run_aggregate_supply";
-        if(q.includes("natural rate of output") || q.includes("potential output")) return "potential_output";
-        if(q.includes("sticky wages") || q.includes("sticky prices")) return "sticky_wage_price_theory";
-        if(q.includes("misperceptions")) return "misperceptions_theory";
-        if(q.includes("input prices")) return "input_price_shock";
-        if(q.includes("oil")) return "oil_shock";
-        if(q.includes("productivity")) return "productivity_shock";
-        if(q.includes("expected price level") || q.includes("expectations")) return "expectations_adjustment";
-        if(q.includes("right")) return "as_shift_right";
-        if(q.includes("left")) return "as_shift_left";
-    }
+if(tag === "shocks" || tag === "shock" || tag === "business_cycle" || tag === "instability"){
+    if(q.includes("negative demand shock") || q.includes("fall in consumption") || q.includes("fall in investment")) return "LO13.1_negative_demand_shock";
+    if(q.includes("positive demand shock") || q.includes("rise in consumption") || q.includes("rise in investment")) return "LO13.1_positive_demand_shock";
+    if(q.includes("is shifts left") || q.includes("is curve shifts left")) return "LO13.1_is_left_shock";
+    if(q.includes("is shifts right") || q.includes("is curve shifts right")) return "LO13.1_is_right_shock";
+    if(q.includes("lm shifts left") || q.includes("money supply falls")) return "LO13.1_lm_left_shock";
+    if(q.includes("lm shifts right") || q.includes("money supply rises")) return "LO13.1_lm_right_shock";
+    if(q.includes("income") && q.includes("interest rate")) return "LO13.1_shock_effects_income_interest";
+    return "LO13.1_is_lm_shocks";
+}
 
-    if(tag === "stabilization" || tag === "adas" || tag === "ad-as" || tag === "shocks"){
-        if(q.includes("recessionary gap")) return "recessionary_gap";
-        if(q.includes("inflationary gap")) return "inflationary_gap";
-        if(q.includes("stagflation")) return "stagflation";
-        if(q.includes("demand shock")) return "demand_shock";
-        if(q.includes("supply shock")) return "supply_shock";
-        if(q.includes("self-correction") || q.includes("self correction")) return "self_correction";
-        if(q.includes("fiscal policy")) return "fiscal_policy";
-        if(q.includes("monetary policy")) return "monetary_policy";
-        if(q.includes("aggregate demand")) return "ad_as_adjustment";
-        if(q.includes("aggregate supply")) return "ad_as_adjustment";
-        if(q.includes("price level") && q.includes("output")) return "output_price_adjustment";
-        if(q.includes("long run")) return "long_run_adjustment";
-        if(q.includes("short run")) return "short_run_adjustment";
-    }
+if(tag === "fiscal" || tag === "fiscal_policy" || tag === "government_spending" || tag === "taxes"){
+    if(q.includes("government purchases") || q.includes("government spending")) return "LO13.2_government_spending";
+    if(q.includes("tax cut") || q.includes("tax decrease")) return "LO13.2_tax_cut";
+    if(q.includes("tax increase")) return "LO13.2_tax_increase";
+    if(q.includes("crowding out")) return "LO13.2_crowding_out";
+    if(q.includes("multiplier")) return "LO13.2_fiscal_multiplier";
+    if(q.includes("expansionary fiscal")) return "LO13.2_expansionary_fiscal_policy";
+    if(q.includes("contractionary fiscal")) return "LO13.2_contractionary_fiscal_policy";
+    if(q.includes("is curve") || q.includes("is shifts")) return "LO13.2_fiscal_policy_is_shift";
+    return "LO13.2_fiscal_policy";
+}
+
+if(tag === "monetary" || tag === "monetary_policy" || tag === "fed" || tag === "money_supply"){
+    if(q.includes("increase money supply") || q.includes("monetary expansion") || q.includes("open market purchase") || q.includes("buys bonds")) return "LO13.3_expansionary_monetary_policy";
+    if(q.includes("decrease money supply") || q.includes("monetary contraction") || q.includes("open market sale") || q.includes("sells bonds")) return "LO13.3_contractionary_monetary_policy";
+    if(q.includes("lm curve") || q.includes("lm shifts")) return "LO13.3_monetary_policy_lm_shift";
+    if(q.includes("interest rate") && q.includes("investment")) return "LO13.3_interest_investment_channel";
+    if(q.includes("fed")) return "LO13.3_federal_reserve_policy";
+    return "LO13.3_monetary_policy";
+}
+
+if(tag === "aggregate_demand" || tag === "ad" || tag === "ad_curve" || tag === "price_level"){
+    if(q.includes("derive aggregate demand") || q.includes("derived from is-lm") || q.includes("derive ad")) return "LO13.4_derive_aggregate_demand";
+    if(q.includes("price level") && q.includes("money supply")) return "LO13.4_price_level_real_money_balances";
+    if(q.includes("price level") && q.includes("lm")) return "LO13.4_price_level_lm_shift";
+    if(q.includes("price level") && q.includes("income")) return "LO13.4_price_level_income_relationship";
+    if(q.includes("aggregate demand") || q.includes("ad curve")) return "LO13.4_aggregate_demand_curve";
+    if(q.includes("downward sloping")) return "LO13.4_downward_sloping_ad";
+    return "LO13.4_aggregate_demand";
+}
+
+if(tag === "depression" || tag === "great_depression" || tag === "crisis" || tag === "deflation"){
+    if(q.includes("spending hypothesis")) return "LO13.5_spending_hypothesis";
+    if(q.includes("money hypothesis")) return "LO13.5_money_hypothesis";
+    if(q.includes("deflation")) return "LO13.5_deflation_effects";
+    if(q.includes("debt-deflation") || q.includes("debt deflation")) return "LO13.5_debt_deflation";
+    if(q.includes("bank failure") || q.includes("banking panic")) return "LO13.5_banking_crisis";
+    if(q.includes("great depression")) return "LO13.5_great_depression";
+    if(q.includes("is curve")) return "LO13.5_depression_is_shift";
+    if(q.includes("lm curve")) return "LO13.5_depression_lm_shift";
+    return "LO13.5_great_depression_theories";
+}
 
     return `${tag}_${type}`;
 }
@@ -3009,15 +2996,15 @@ document.getElementById("emailInput").addEventListener("keypress", function(even
 // This affects UI only, not game logic.
 // =============================================
 function getAreaName(r) {
-    if (r <= 9) return "The Counting Floor";
-    if (r === 10) return "The Vault of Liquidity";
-    if (r <= 19) return "The Growth Foundry";
-    if (r === 20) return "The Steady-State Chamber";
-    if (r <= 25) return "The Hall of Shifting Demand";
-    if (r <= 29) return "The Corridor of Shocks";
-    return "The Stabilization Throne";
+    if (r <= 9) return "The Demand Maps";
+    if (r === 10) return "The Cartographer’s Table";
+    if (r <= 19) return "The Rateworks";
+    if (r === 20) return "The Engineer’s Dial";
+    if (r <= 25) return "The Policy Channel";
+    if (r <= 29) return "The Forecast Array";
+    return "The Nexus Core";
 }
-
+	 
 // =============================================
 // WIZARD DIALOGUE SYSTEM — SAFE TO CUSTOMIZE
 // =============================================
@@ -3040,52 +3027,52 @@ function getAreaName(r) {
 // =============================================
 const wizardFeedback = {
     correct: [
-        "The ledger accepts this entry.",
-        "Reconciled.",
-        "The account holds.",
-        "Your reasoning survives inspection.",
-        "Approved. Proceed."
+        "Signal holds.",
+        "That stabilizes the model.",
+        "Good. The system responds.",
+        "Clean adjustment.",
+        "The Nexus accepts it."
     ],
     wrong: [
-        "The ledger rejects this entry.",
-        "Discrepancy detected.",
-        "Your calculation fails inspection.",
-        "The books do not balance.",
-        "Rejected. Correct the record."
+        "That destabilizes the system.",
+        "No. That shifts the wrong curve.",
+        "Bad read. Recalibrate.",
+        "You just moved the economy the wrong way.",
+        "The model rejects that."
     ]
 };
 
 const wizardLines = {
     definition: [
-        "Define the term precisely.",
-        "No vague entries are accepted.",
-        "State the measure.",
-        "Classify it correctly."
+        "Name the mechanism.",
+        "Start with the structure.",
+        "Define it before you break it.",
+        "Classify the signal."
     ],
     interpretation: [
-        "Interpret the signal.",
-        "Trace the adjustment.",
-        "Read the account carefully.",
-        "What does the system reveal?"
+        "Trace the shift.",
+        "Follow the pressure.",
+        "Read the adjustment.",
+        "What changes next?"
     ],
     trap: [
-        "This is where errors hide.",
-        "Most entries fail here.",
-        "The wording is not your ally.",
+        "That answer is bait.",
+        "Do not confuse movement with cause.",
+        "Slow down. The curve is lying to you.",
         "Audit the assumption.",
-        "Look again before the ledger closes."
+        "Find the hidden shift."
     ],
     calculation: [
-        "Calculate before you answer.",
-        "The numbers must reconcile.",
-        "Show the implied value.",
-        "Balance the account."
+        "Compute before you command.",
+        "Numbers first. Then policy.",
+        "Calibrate the rate.",
+        "Solve the mechanism."
     ],
     default: [
-        "Answer.",
+        "Decide.",
+        "Commit.",
         "Proceed.",
-        "Enter your judgment.",
-        "Commit to the record."
+        "Enter your command."
     ]
 };
      
@@ -3917,9 +3904,9 @@ function updateMazeTrack() {
             box.innerText = "🟩";
             box.style.opacity = "0.6";
         } else if (i === room) {
-            box.classList.add("active"); // Trigger the gold pulse
+            box.classList.add("active"); // Trigger the blue pulse
             box.setAttribute("aria-label",`Current room ${i} of 30`);
-            box.innerText = "🟨";
+            box.innerText = "🟦";
         } else {
             // Boss icons for future rooms
             if (i === 10){box.innerHTML = '<img src="cartographer.png" class="boss-icon">';box.classList.add("boss10");}
@@ -4147,13 +4134,13 @@ function loadQuestion() {
    		imageBox.style.display = "block";
 		}
 
-       // 3. Boss Identity UI (Logic moved ABOVE the return)
-        let bTitle = room === 10 ? "THE LORD OF LIQUIDITY "
-               : room === 20 ? "THE KEEPER OF THE STEADY STATE"
-               : "THE SOVEREIGN OF SHOCKS";
+        // 3. Boss Identity UI (Logic moved ABOVE the return)
+        let bTitle = room === 10 ? "THE DEMAND CARTOGRAPHER"
+               : room === 20 ? "THE RATE ENGINEER"
+               : "THE SHOCK FORECASTER";
 
-       let bColor = room === 10 ? "#a78bfa"
-               : room === 20 ? "#7c3aed"
+        let bColor = room === 10 ? "#f0c86a"
+               : room === 20 ? "#6eb4ff"
                : "#991b1b";
        
         document.getElementById("srAnnouncements").innerText =`Boss encounter. ${bTitle}. Prepare yourself`;
@@ -4515,10 +4502,10 @@ if(remediationState.active){
          // Boss defeated
          sendGameData({
             runID: runID,
-			      game: "The Command Nexus",
+			game: "The Command Nexus",
             event: "boss_defeated",
             user: username,
-			      email: studentEmail,
+			email: studentEmail,
             room: room
          });
            
@@ -4710,22 +4697,22 @@ function unlockArtifact(key) {
 //
 // Keep variable "streak" intact.
 // =============================================
- function handleStreakVisuals() {
+function handleStreakVisuals() {
     let streakMsg = "";
-    let streakColor = "#fbbf24";
+    let streakColor = "#f0c86a";
 
-if (streak === 5) {
-    streakMsg = `<span class="streak"><img src="streakspark.png" class="streak-icon">INFLATION TAMED</span>`;
-    streakColor = "#d6b15c";
-}
-else if (streak === 10) {
-    streakMsg = `<span class="streak"><img src="streakgear.png" class="streak-icon">GROWTH SECURED</span>`;
-    streakColor = "#c46a3a";
-}
-else if (streak === 20) {
-    streakMsg = `<span class="streak"><img src="streaksignal.png" class="streak-icon">STABILIZATION ACHIEVED</span>`;
-    streakColor = "#f0c75e";
-}
+    if (streak === 5) {
+        streakMsg = `<span class="streak"><img src="streakspark.png" class="streak-icon">SPARK OF RECOVERY</span>`;
+        streakColor = "#6eb4ff";
+    }
+    else if (streak === 10) {
+        streakMsg = `<span class="streak"><img src="streakgear.png" class="streak-icon">GEAR OF MOMENTUM</span>`;
+        streakColor = "#f0c86a";
+    }
+    else if (streak === 20) {
+        streakMsg = `<span class="streak"><img src="streaksignal.png" class="streak-icon">SIGNAL OF COMMAND</span>`;
+        streakColor = "#9fc7f5";
+    }
 
     if (streakMsg) {
         sfxMilestone.currentTime = 0;
@@ -4734,9 +4721,9 @@ else if (streak === 20) {
         document.getElementById("streakDisplay").style.color = streakColor;
     } else if (streak > 0) {
         document.getElementById("streakDisplay").innerText = `Streak: ${streak}`;
-        document.getElementById("streakDisplay").style.color = "#fbbf24";
+        document.getElementById("streakDisplay").style.color = "#f0c86a";
     }
-}  
+} 
 
 // =============================================
 // TRANSITION SCREEN — SAFE TO CUSTOMIZE
@@ -5276,7 +5263,7 @@ function sendGameData(data) {
     game: data.game || "The Command Nexus",
     event: data.event || "",
     user: data.user || username || "anonymous",
-	  email: studentEmail || "",  
+	email: studentEmail || "",  
     room: Number(data.room ?? 0),
     questionId: Number(data.questionId ?? data.question ?? 0),
     correct: Number(data.correct ?? 0),
