@@ -2088,13 +2088,15 @@ let remediationState = {
     stage: null,
     tag: null,
     objective: null,
+    skill: null,
+    commonError: null,
     sourceType: null,
     returnRoom: null,
     originQuestionId: null,
     careless: false
 };
 let conceptMemory = {};
-let masteryState = { byTag: {}, byObjective: {}, recent: [] };
+let masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
 let adaptiveMode = "support";
 // =============================================
 // RAPID GUESSING / BUTTON-MASHING DETECTOR
@@ -2135,6 +2137,11 @@ let questionHistory = {
 };
 
 const SAVE_KEY = "commandNexusSave_v1";
+const REALM_MISSION_KEY = "nexus";
+const REALM_STARTED_KEY = "macroHub_nexus_started";
+const REALM_COMPLETE_KEY = "macroHub_nexus_complete";
+const REALM_STATUS_KEY = "macroHub_nexus_status";
+const REALM_ROOM_KEY = "macroHub_nexus_room";
 
 function saveGameState(){
     const saveData = {
@@ -2169,6 +2176,9 @@ function saveGameState(){
 
     localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
     localStorage.setItem("gauntletRoom", String(room));
+    localStorage.setItem(REALM_STARTED_KEY, "true");
+    localStorage.setItem(REALM_STATUS_KEY, "contested");
+    localStorage.setItem(REALM_ROOM_KEY, String(room));
 
     const autosave = document.getElementById("autosave");
     if(autosave){
@@ -2196,7 +2206,8 @@ function loadSavedGame(){
         runID = saveData.runID || runID || "";
 
         conceptMemory = saveData.conceptMemory || {};
-        masteryState = saveData.masteryState || { byTag: {}, byObjective: {}, recent: [] };
+        masteryState = saveData.masteryState || { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
+        if(!masteryState.bySkill) masteryState.bySkill = {};
         adaptiveMode = saveData.adaptiveMode || "support";
         tagHistory = saveData.tagHistory || [];
         lastTypes = saveData.lastTypes || [];
@@ -2329,6 +2340,56 @@ function getTypeBucket(tag, type){
         };
     }
     return tagBucket.byType[key];
+}
+
+function getSkillKey(question){
+    return question?.primarySkill || question?.repairSkill || inferSkill(question) || null;
+}
+
+function getSkillBucket(question){
+    const skill = getSkillKey(question);
+    if(!skill) return null;
+
+    if(!masteryState.bySkill){
+        masteryState.bySkill = {};
+    }
+
+    if(!masteryState.bySkill[skill]){
+        masteryState.bySkill[skill] = {
+            attempts: 0,
+            correct: 0,
+            avgTime: 0,
+            byType: {}
+        };
+    }
+
+    return masteryState.bySkill[skill];
+}
+
+function inferSkill(question){
+    if(!question) return null;
+
+    const q = (question.q || "").toLowerCase();
+    const tag = (question.tag || "").toLowerCase();
+    const objective = (question.objective || "").toLowerCase();
+
+    if(tag.includes("is") || tag.includes("goods_market") || tag.includes("keynesian") || q.includes("is curve") || q.includes("keynesian cross") || q.includes("planned expenditure")) return "is_curve_goods_market";
+    if(tag.includes("lm") || tag.includes("money_market") || tag.includes("liquidity") || q.includes("lm curve") || q.includes("money demand") || q.includes("money supply")) return "lm_curve_money_market";
+    if(tag.includes("is_lm") || tag.includes("equilibrium") || q.includes("is-lm") || q.includes("intersection")) return "is_lm_equilibrium";
+    if(tag.includes("shock") || tag.includes("business_cycle") || q.includes("shock") || q.includes("shift left") || q.includes("shift right")) return "macro_shock_tracing";
+    if(tag.includes("fiscal") || q.includes("government spending") || q.includes("tax cut") || q.includes("tax increase") || q.includes("crowding out")) return "fiscal_policy_is_shift";
+    if(tag.includes("monetary") || tag.includes("fed") || q.includes("open market") || q.includes("fed") || q.includes("monetary")) return "monetary_policy_lm_shift";
+    if(tag.includes("aggregate") || tag === "ad" || q.includes("aggregate demand") || q.includes("price level")) return "aggregate_demand_from_islm";
+    if(tag.includes("depression") || tag.includes("crisis") || tag.includes("deflation") || q.includes("great depression") || q.includes("deflation")) return "depression_crisis_mechanisms";
+
+    if(tag.includes("interaction") || objective.includes("11.1")) return "linked_market_spillovers";
+    if(tag.includes("efficiency") || objective.includes("11.2") || objective.includes("11.4")) return "efficiency_pareto_contract_curve";
+    if(tag.includes("failure") || objective.includes("11.3")) return "market_failure_externalities";
+    if(tag.includes("power") || objective.includes("12.")) return "monopoly_power_pricing";
+    if(tag.includes("strategy") || objective.includes("13.")) return "strategic_interdependence";
+    if(tag.includes("equity") || objective.includes("11.5")) return "efficiency_equity_tradeoff";
+
+    return tag || null;
 }
 
 function inferObjective(question){
@@ -2502,17 +2563,20 @@ function recordAdaptiveAttempt(question, isCorrect, responseTime){
     const tagBucket = getTagBucket(question.tag);
     const typeBucket = getTypeBucket(question.tag, question.type);
     const objectiveBucket = getObjectiveBucket(question);
+    const skillBucket = getSkillBucket(question);
 
     updateBucket(tagBucket, isCorrect, responseTime);
     updateBucket(typeBucket, isCorrect, responseTime);
     updateBucket(objectiveBucket, isCorrect, responseTime);
+    updateBucket(skillBucket, isCorrect, responseTime);
 
     masteryState.recent.push({
         correct: !!isCorrect,
         responseTime,
         tag: question.tag,
         type: question.type || "default",
-        objective: currentQuestion.objective || inferObjective(currentQuestion)
+        objective: currentQuestion.objective || inferObjective(currentQuestion),
+        skill: getSkillKey(question)
     });
 
     if(masteryState.recent.length > 20){
@@ -2624,6 +2688,8 @@ function resetRemediationState(){
         stage: null,
         tag: null,
         objective: null,
+        skill: null,
+        commonError: null,
         sourceType: null,
         returnRoom: null,
         originQuestionId: null,
@@ -2643,12 +2709,15 @@ function planRemediation(question, responseTime){
     const carelessMiss = responseTime < expected * 0.55 && (objectiveAccuracy === null || objectiveAccuracy >= 0.45);
     const repeatedObjectiveMiss = objectiveAttempts >= 2 && objectiveAccuracy !== null && objectiveAccuracy < 0.6;
     const slowStruggle = responseTime > expected * 1.2;
+    const skill = getSkillKey(question);
 
     return {
         active: true,
         stage: carelessMiss ? "bridge" : "repair",
         tag: question.tag,
         objective: currentQuestion.objective || inferObjective(currentQuestion),
+        skill: skill,
+        commonError: question.commonError || null,
         sourceType: question.type || "default",
         returnRoom: room,
         originQuestionId: question.id || null,
@@ -2664,10 +2733,18 @@ function getRemediationStageLabel(stage){
     return "Recovery Retest";
 }
 
-function getQuestionsMatchingNeed(pool, objectiveKey, tag, excludeIds = []){
+function getQuestionsMatchingNeed(pool, objectiveKey, tag, excludeIds = [], skillKey = null){
     if(!Array.isArray(pool) || pool.length === 0) return [];
 
     let candidates = pool.filter(q => !excludeIds.includes(q.id));
+
+    if(skillKey){
+        let skillMatches = candidates.filter(q =>
+            q.primarySkill === skillKey || q.repairSkill === skillKey || inferSkill(q) === skillKey
+        );
+        if(skillMatches.length > 0) return skillMatches;
+    }
+
     let objectiveMatches = candidates.filter(q => inferObjective(q) === objectiveKey);
     if(objectiveMatches.length > 0) return objectiveMatches;
 
@@ -2685,13 +2762,13 @@ function getRetestPoolName(){
     return "elite";
 }
 
-function pickRemediationFromBank(poolName, objectiveKey, tag, purpose = "confirm"){
+function pickRemediationFromBank(poolName, objectiveKey, tag, purpose = "confirm", skillKey = null){
     const pool = questionBanks[poolName] || [];
     const recentIds = (questionHistory[poolName] || []).slice(-10);
-    let candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, recentIds);
+    let candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, recentIds, skillKey);
 
     if(candidates.length === 0){
-        candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, []);
+        candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, [], skillKey);
     }
 
     if(candidates.length === 0) return null;
@@ -2720,23 +2797,23 @@ function getRemediationQuestion(state){
     const excludeIds = [state.originQuestionId].filter(Boolean);
 
     if(state.stage === "repair"){
-        const repairPool = easyConceptPools[state.tag] || [];
-        const repairCandidates = getQuestionsMatchingNeed(repairPool, state.objective, state.tag, excludeIds);
+        const repairPool = easyConceptPools[state.skill] || easyConceptPools[state.tag] || [];
+        const repairCandidates = getQuestionsMatchingNeed(repairPool, state.objective, state.tag, excludeIds, state.skill);
         if(repairCandidates.length > 0){
             return weightedPick(repairCandidates, { mode: "support", purpose: "repair" });
         }
     }
 
     if(state.stage === "bridge"){
-        const bridgePool = mediumConceptPools[state.tag] || [];
-        const bridgeCandidates = getQuestionsMatchingNeed(bridgePool, state.objective, state.tag, excludeIds);
+        const bridgePool = mediumConceptPools[state.skill] || mediumConceptPools[state.tag] || [];
+        const bridgeCandidates = getQuestionsMatchingNeed(bridgePool, state.objective, state.tag, excludeIds, state.skill);
         if(bridgeCandidates.length > 0){
             return weightedPick(bridgeCandidates, { mode: "support", purpose: "confirm" });
         }
     }
 
     const retestPoolName = getRetestPoolName();
-    return pickRemediationFromBank(retestPoolName, state.objective, state.tag, state.stage === "retest" ? "challenge" : "confirm");
+    return pickRemediationFromBank(retestPoolName, state.objective, state.tag, state.stage === "retest" ? "challenge" : "confirm", state.skill);
 }
 
 function weightedPick(pool, options = {}){
@@ -2935,6 +3012,63 @@ const artifacts = {
         text:"The shock is no longer hidden. Fiscal force, monetary response, aggregate demand, and crisis signals come into focus. The Nexus does not promise certainty. It reveals the pressure points."
     }
 };
+
+function getRecoveryLine(stage){
+  if(stage === "repair"){
+    return "Recovery channel opened. The Analyst is isolating the broken macro signal.";
+  }
+
+  if(stage === "bridge"){
+    return "Bridge calibration active. Apply the model before the Nexus lets you advance.";
+  }
+
+  if(stage === "retest"){
+    return "Retest protocol reopened. Same weakness. Cleaner command required.";
+  }
+
+  if(stage === "miss"){
+    return "The Nexus is still unstable. Repair the weakness before advancing.";
+  }
+
+  return "Recovery confirmed. Return to the Nexus.";
+}
+
+function getCommandNexusBossName(){
+  if(room === 10) return "The Demand Cartographer";
+  if(room === 20) return "The Rate Engineer";
+  if(room === 30) return "The Shock Forecaster";
+  return "The Command Nexus";
+}
+
+function getCommandNexusBossLine({ isCorrect, tag, type, objective, streak, bossHealth, responseTime }){
+  const bossName = getCommandNexusBossName();
+
+  if(isCorrect && streak >= 5){
+    return `${bossName}: The model holds. Now prove the command was not luck.`;
+  }
+
+  if(isCorrect && bossHealth <= 2){
+    return `${bossName}: Clean signal. The command layer is cracking.`;
+  }
+
+  if(!isCorrect && responseTime < 5000){
+    return `${bossName}: Fast command. Bad command. The Nexus does not reward button mashing.`;
+  }
+
+  if(!isCorrect && (tag === "is" || tag === "lm" || tag === "is_lm" || tag === "fiscal" || tag === "monetary" || tag === "aggregate_demand" || tag === "depression")){
+    return `${bossName}: Wrong curve, wrong system. Recalibrate before you wreck the model.`;
+  }
+
+  if(!isCorrect && tag){
+    return `${bossName}: Weakness logged: ${tag}. The Nexus will circle back.`;
+  }
+
+  if(isCorrect){
+    return `${bossName}: Correct. One clean command does not stabilize the system.`;
+  }
+
+  return `${bossName}: The checkpoint holds. Try again.`;
+}
   
 // =============================================
 // USERNAME RESTORE — SAFE TO MODIFY
@@ -3037,6 +3171,9 @@ function startGame(shouldResume = false) {
     localStorage.setItem("gauntletEmail", studentEmail);
     localStorage.setItem("gauntletUser", username);
     localStorage.setItem("gauntletRunID", runID);
+    localStorage.setItem(REALM_STARTED_KEY, "true");
+    localStorage.setItem(REALM_STATUS_KEY, "contested");
+    localStorage.setItem(REALM_ROOM_KEY, String(room));
 
     sendGameData({
         runID: runID,
@@ -4687,7 +4824,7 @@ if(remediationState.active){
                 currentQuestion.hint ? "💡 Hint: " + currentQuestion.hint : "";
 
             msgElement.innerHTML =
-                `<span class='fade-out-text'>Control returns. Now prove your command under pressure.</span>`;
+                `<span class='fade-out-text'>${getRecoveryLine("bridge")}</span>`;
 
             displayQuestion();
             return;
@@ -4712,7 +4849,7 @@ if(remediationState.active){
                 currentQuestion.hint ? "💡 Hint: " + currentQuestion.hint : "";
 
             msgElement.innerHTML =
-                `<span class='fade-out-text'>The concept is contained. One final proof.</span>`;
+                `<span class='fade-out-text'>${getRecoveryLine("retest")}</span>`;
 
             displayQuestion();
             return;
@@ -4725,7 +4862,7 @@ if(remediationState.active){
     adaptiveMode = "support";
 
     msgElement.innerHTML =
-        `<span class='fade-out-text'>Recovery confirmed. Return to the Nexus.</span>`;
+        `<span class='fade-out-text'>${getRecoveryLine("complete")}</span>`;
 
     room = returnRoom;
     saveGameState();
@@ -4747,7 +4884,7 @@ if(remediationState.active){
         if(isBossRoom){
         bossHealth--;
         
-        msgElement.innerHTML = `<span style='color:#f87171;font-weight:bold;'>⚔ HIT! Boss Health: ${bossHealth}/3</span>`;
+        msgElement.innerHTML = `<span style='color:#f87171;font-weight:bold;'>⚔ HIT! Boss Health: ${bossHealth}/3</span><br><span class='fade-out-text'>${getCommandNexusBossLine({ isCorrect, tag: currentQuestion.tag, type: currentQuestion.type, objective: currentQuestion.objective || inferObjective(currentQuestion), streak, bossHealth, responseTime })}</span>`;
         triggerBossShake();
         
         if (bossHealth > 0) {
@@ -4835,6 +4972,10 @@ if(remediationState.active){
             (conceptMemory[currentQuestion.tag] || 0) + rushPenalty;
     }
 
+    if(isBossRoom){
+        msgElement.innerHTML = `<span class='fade-out-text'>${getCommandNexusBossLine({ isCorrect, tag: currentQuestion.tag, type: currentQuestion.type, objective: currentQuestion.objective || inferObjective(currentQuestion), streak, bossHealth, responseTime })}</span>`;
+    }
+
     // --- IF STUDENT MISSES DURING ACTIVE REMEDIATION ---
 if(remediationState.active){
     const remediationPrompt = getRemediationQuestion(remediationState);
@@ -4850,7 +4991,7 @@ if(remediationState.active){
             currentQuestion.hint ? "💡 Hint: " + currentQuestion.hint : "";
 
         msgElement.innerHTML =
-            `<span class='fade-out-text'>Your control is still unstable. Repair the weakness before advancing.</span>`;
+            `<span class='fade-out-text'>${getRecoveryLine("miss")}</span>`;
 
         displayQuestion();
         return;
@@ -5270,6 +5411,11 @@ function generateCode(name, acc, streak, total){
 // This is a PRESENTATION layer, not a logic layer.
 // =============================================     
 function handleVictory() {
+    localStorage.setItem(REALM_STARTED_KEY, "true");
+    localStorage.setItem(REALM_COMPLETE_KEY, "true");
+    localStorage.setItem(REALM_STATUS_KEY, "restored");
+    localStorage.setItem(REALM_ROOM_KEY, "30");
+
     clearSavedGame();
 
     bgMusic.pause();
@@ -5518,7 +5664,7 @@ function sendGameData(data) {
     timestamp: new Date().toISOString(),
     runID: data.runID || localStorage.getItem("gauntletRunID") || "",
     token: data.token || "",
-    version: "NEXUS-engine-ms-telemetry-v1",
+    version: "CommandNexus-ms-telemetry-v3.5",
     userAgent: navigator.userAgent || "",
     game: data.game || "The Command Nexus",
     event: data.event || "",
@@ -5567,6 +5713,7 @@ function sendGameData(data) {
 </script>
 </body>
 </html>
+
 
 
 
