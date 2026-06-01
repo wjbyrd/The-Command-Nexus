@@ -3205,6 +3205,8 @@ if(!hasSavedRun){
 	rapidGuessHistory = [];
 	rapidGuessWarnings = 0;
 	rapidGuessLocked = false;
+	bossMistakeCountThisRun = 0;
+    bossesDefeatedThisRun = 0
 
     localStorage.removeItem("gauntletRoom");
 
@@ -4804,7 +4806,9 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
         },200);
 
 		correctAnswers++;
-        handleStreakVisuals();
+		addRealmStat("macroHub_totalCorrectAnswers", 1);
+		addRealmStat("macroHub_engine_correctTotal", 1);
+		handleStreakVisuals();
        
         // --- STAGED REMEDIATION SUCCESS PATH ---
 if(remediationState.active){
@@ -4902,6 +4906,10 @@ if(remediationState.active){
          });
            
          bossPool = [];
+
+        if(gameMode === "standard"){
+         bossesDefeatedThisRun++;
+         }
            
         // Boss defeated (CHANGE ARTIFACT NAMES)
         if(room === 10){
@@ -4947,6 +4955,9 @@ if(remediationState.active){
        
     if (isBossRoom) {
         sfxWrong.volume = 0.7;
+		if(gameMode === "standard"){
+ 		bossMistakeCountThisRun++;
+		}
     } else {
         sfxWrong.volume = 0.5;
     }
@@ -5411,11 +5422,21 @@ function generateCode(name, acc, streak, total){
 // This is a PRESENTATION layer, not a logic layer.
 // =============================================     
 function handleVictory() {
-    localStorage.setItem(REALM_STARTED_KEY, "true");
-    localStorage.setItem(REALM_COMPLETE_KEY, "true");
-    localStorage.setItem(REALM_STATUS_KEY, "restored");
-    localStorage.setItem(REALM_ROOM_KEY, "30");
+	localStorage.setItem(REALM_STARTED_KEY, "true");
+	localStorage.setItem(REALM_COMPLETE_KEY, "true");
+	localStorage.setItem(REALM_STATUS_KEY, "restored");
+	localStorage.setItem(REALM_ROOM_KEY, "30");
 
+	localStorage.setItem("macroHub_engine_artifactsCollected", "3");
+
+if(resumedSavedRunThisSession){
+    setRealmFlag("macroHub_engine_resume_finish_complete");
+    setRealmFlag("macroHub_returnAndRebuild_complete");
+}
+
+if(bossesDefeatedThisRun >= 3 && bossMistakeCountThisRun === 0){
+    setRealmFlag("macroHub_engine_perfect_calibration_complete");
+}
     clearSavedGame();
 
     bgMusic.pause();
