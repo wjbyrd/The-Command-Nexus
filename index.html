@@ -407,7 +407,8 @@ h2 {
 }
 
 /* Command Nexus override */
-.nexus #message {
+.nexus #message,
+.command-nexus #message {
     color: #9fc7f5;
     font-size: 17px;
     font-style: italic;
@@ -1772,6 +1773,44 @@ TIP:
   background:rgba(255,255,255,.08);
 }
  
+
+/* === Command Nexus upgrade controls from National Engine blueprint === */
+.return-menu-btn{
+    position:absolute; top:12px; right:12px; padding:6px 12px; font-size:12px;
+    letter-spacing:1px; text-transform:uppercase; color:#e6ecf5;
+    background:linear-gradient(180deg, #102c4d, #050b14);
+    border:1px solid rgba(120,180,255,0.34); border-radius:6px; cursor:pointer;
+    box-shadow:0 0 10px rgba(80,140,220,0.28), inset 0 0 7px rgba(0,0,0,0.76);
+    transition:all .15s ease;
+}
+.return-menu-btn:hover{color:#f0c86a; background:linear-gradient(180deg,#1a4d82,#0b1d34); border-color:rgba(240,200,106,.62);}
+.return-menu-btn:active{transform:scale(.95);}
+.game-modal{position:fixed; inset:0; z-index:500; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(2,5,12,.74); backdrop-filter:blur(6px);}
+.game-modal-card{width:min(520px,100%); padding:28px; border-radius:18px; background:radial-gradient(circle at top, rgba(24,82,135,.28), rgba(6,14,28,.92) 48%, rgba(2,5,12,.98)); border:1px solid rgba(240,200,106,.38); box-shadow:0 0 34px rgba(0,0,0,.88),0 0 38px rgba(80,140,220,.20),0 0 46px rgba(240,200,106,.12),inset 0 0 30px rgba(0,0,0,.74); text-align:center;}
+.game-modal-card h2{margin:0 0 12px; color:#f0c86a; font-size:30px; letter-spacing:2px; text-transform:uppercase;}
+.game-modal-card p{margin:0 0 24px; color:#c9d4e6; font-size:18px; line-height:1.45;}
+.game-modal-actions{display:flex; justify-content:center; gap:12px; flex-wrap:wrap;}
+.secondary-modal-btn{color:#c9d4e6; border-color:rgba(120,180,255,.42);}
+.mode-select-screen{position:fixed; inset:0; z-index:110; align-items:center; justify-content:center; padding:30px; background:linear-gradient(rgba(2,5,12,.42), rgba(2,5,12,.78)), url('start screen image.png'); background-size:cover; background-position:center;}
+.mode-select-panel{width:min(1100px,100%); padding:28px; border-radius:20px; background:rgba(6,14,28,.88); border:1px solid rgba(120,180,255,.34); box-shadow:0 0 36px rgba(0,0,0,.84),0 0 44px rgba(80,140,220,.20),inset 0 0 36px rgba(0,0,0,.64); text-align:center;}
+.mode-title{margin:0; font-size:clamp(38px,5vw,68px); letter-spacing:4px; color:#f0c86a; text-shadow:0 0 14px rgba(240,200,106,.62),0 0 28px rgba(80,140,220,.28),0 3px 8px rgba(0,0,0,.9);}
+.mode-subtitle{margin:8px auto 26px; color:#c9d4e6; font-size:20px;}
+.mode-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px;}
+.mode-card{min-height:330px; padding:0; overflow:hidden; border-radius:18px; border:1px solid rgba(120,180,255,.30); background:rgba(6,14,28,.94); color:#e6ecf5; cursor:pointer; display:flex; flex-direction:column; text-align:left; box-shadow:0 0 22px rgba(0,0,0,.68), inset 0 0 18px rgba(0,0,0,.58); transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;}
+.mode-card:hover{transform:translateY(-6px) scale(1.02); border-color:rgba(240,200,106,.78); box-shadow:0 0 28px rgba(80,140,220,.32),0 0 38px rgba(240,200,106,.16),inset 0 0 18px rgba(0,0,0,.62);}
+.mode-card img{width:100%; height:240px; object-fit:cover; border-bottom:1px solid rgba(240,200,106,.22); background:linear-gradient(180deg, rgba(24,82,135,.80), rgba(6,14,28,.98));}
+.mode-card-title{display:block; padding:18px 16px 20px; font-size:22px; font-weight:700; letter-spacing:1px; color:#f0c86a; text-align:center;}
+.mode-card-text{display:block; padding:8px 22px 24px; font-size:15px; line-height:1.35; color:rgba(201,212,230,.88); text-align:left;}
+.mode-back-btn{margin-top:18px; min-width:140px;}
+.timed-mode-hud{margin:8px auto 12px; padding:8px 14px; width:fit-content; border-radius:999px; align-items:center; gap:12px; background:linear-gradient(180deg, rgba(24,82,135,.64), rgba(6,14,28,.96)); border:1px solid rgba(240,200,106,.48); box-shadow:0 0 16px rgba(80,140,220,.24),0 0 26px rgba(240,200,106,.12),inset 0 0 12px rgba(0,0,0,.72);}
+.timer-label{font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#c9d4e6;}
+.timer-display{font-size:22px; font-weight:700; letter-spacing:1px; color:#f0c86a; text-shadow:0 0 10px rgba(240,200,106,.62),0 0 18px rgba(100,170,255,.24);}
+.timer-warning{animation:timerWarningPulse .75s ease-in-out infinite alternate;}
+@keyframes timerWarningPulse{from{transform:scale(1);} to{transform:scale(1.08); text-shadow:0 0 14px rgba(248,113,113,.90),0 0 24px rgba(240,200,106,.42);}}
+@media(max-width:900px){.mode-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){.return-menu-btn{display:none!important;}}
+@media(max-width:560px){.mode-select-screen{padding:14px; align-items:flex-start; overflow-y:auto;} .mode-grid{grid-template-columns:1fr;} .mode-card{min-height:250px;} .mode-card img{height:145px;}}
+
 </style>
 </head>
 
@@ -1846,7 +1885,7 @@ Respect structure strictly.
     <h1 class="title">THE COMMAND NEXUS</h1>
     <h2 class="subtitle">Collect. Analyze. Stabilize.</h2>
     <input id="emailInput" type="email" placeholder="Enter your school email" class="name-input">
-    <button class="start-btn" onclick="startNewRun()">ENTER THE NEXUS</button>
+    <button class="start-btn" onclick="showModeSelect()">ENTER THE NEXUS</button>
 
     <button id="continueRunBtn"
             class="start-btn secondary-start-btn"
@@ -1857,8 +1896,44 @@ Respect structure strictly.
   </div>
 </div>
 
+<div id="modeSelectScreen" class="mode-select-screen" style="display:none;">
+  <div class="mode-select-panel">
+    <h1 class="mode-title">CHOOSE YOUR NEXUS RUN</h1>
+    <p class="mode-subtitle">Select how you want to enter The Command Nexus.</p>
+
+    <div class="mode-grid">
+      <button class="mode-card" onclick="startSelectedMode('standard')" aria-label="Standard Campaign. Full 30-room run with bosses, artifacts, setbacks, save and resume status, and Nexus progress.">
+        <img src="mode_standard.png" alt="" aria-hidden="true">
+        <span class="mode-card-title">Standard Campaign</span>
+        <span class="mode-card-text">Full 30-room run with bosses, artifacts, setbacks, and Nexus progress.</span>
+      </button>
+
+      <button class="mode-card" onclick="startSelectedMode('timed')" aria-label="Timed Trial. Ten minute run with visible countdown, normal setbacks, rapid guessing penalties, and results saved separately.">
+        <img src="mode_timed.png" alt="" aria-hidden="true">
+        <span class="mode-card-title">Timed Trial</span>
+        <span class="mode-card-text">Ten minutes. Correct answers advance. Misses push you back.</span>
+      </button>
+
+      <button class="mode-card" onclick="startSelectedMode('exam')" aria-label="Exam Drill. No bosses, no artifacts, no Nexus progress. Just adaptive practice.">
+        <img src="mode_exam.png" alt="" aria-hidden="true">
+        <span class="mode-card-title">Exam Drill</span>
+        <span class="mode-card-text">No bosses. No artifacts. No Nexus progress. Just adaptive practice.</span>
+      </button>
+
+      <button class="mode-card" onclick="startSelectedMode('legendary')" aria-label="Legendary Mode. Full 30-room campaign using the hardest available Command Nexus questions.">
+        <img src="mode_legendary.png" alt="" aria-hidden="true">
+        <span class="mode-card-title">Legendary Mode</span>
+        <span class="mode-card-text">Full campaign. Hardest available questions. Bosses still hit. No mercy.</span>
+      </button>
+    </div>
+
+    <button class="mode-back-btn" onclick="returnToTitleScreen()">BACK</button>
+  </div>
+</div>
+
 <div class="dungeon-container">
     <button class="fullscreenBtn" onclick="goFullscreen()">FULLSCREEN</button>
+    <button id="returnMenuBtn" class="return-menu-btn" onclick="confirmReturnToModeMenu()">NEXUS MENU</button>
 	  <button id="soundToggle" class="sound-toggle" onclick="toggleGameSound()" aria-label="Toggle sound">Sound On</button>
 
 <!-- =========================================
@@ -1931,6 +2006,11 @@ or simplify this section.
                 </div>
 
                 <div id="streakDisplay"></div>
+
+                <div id="timedModeHud" class="timed-mode-hud" style="display:none;">
+                    <span class="timer-label">Timed Trial</span>
+                    <span id="timerDisplay" class="timer-display">10:00</span>
+                </div>
                 <p id="bossMessage"></p>
 
                 <div id="questionContainer">
@@ -1952,6 +2032,20 @@ or simplify this section.
         </div>
     </div>
 </div>
+
+
+
+<div id="gameModal" class="game-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="gameModalTitle">
+  <div class="game-modal-card">
+    <h2 id="gameModalTitle"></h2>
+    <p id="gameModalText"></p>
+    <div class="game-modal-actions">
+      <button id="gameModalConfirm" class="continue-btn">Confirm</button>
+      <button id="gameModalCancel" class="continue-btn secondary-modal-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- =========================================
    2. GAME ELEMENTS (CHANGE ELEMENTS WITH NEW GAME)
@@ -2121,19 +2215,23 @@ let usedQuestions = {
     medium: [],
     hard: [],
     elite: [],
+    legendary: [],
     easyBoss: [],
     mediumBoss: [],
     finalBoss: [],
+    legendaryBoss: [],
 };
 let questionHistory = {
     easy: [],
     medium: [],
     hard: [],
     elite: [],
+    legendary: [],
     calculation: [],
     easyBoss: [],
     mediumBoss: [],
     finalBoss: [],
+    legendaryBoss: [],
 };
 
 const SAVE_KEY = "commandNexusSave_v1";
@@ -2143,7 +2241,86 @@ const REALM_COMPLETE_KEY = "macroHub_nexus_complete";
 const REALM_STATUS_KEY = "macroHub_nexus_status";
 const REALM_ROOM_KEY = "macroHub_nexus_room";
 
+let gameMode = "standard";
+let timedModeDurationMs = 10 * 60 * 1000;
+let timedModeEndTime = null;
+let timedModeTimerInterval = null;
+let timedHighestRoom = 1;
+let timedSetbacks = 0;
+
+// =============================================
+// HUB ACHIEVEMENT TRACKING
+// These keys are read by the Macro Test Prep hub.
+// Keep this small and boring. Boring means it works.
+// =============================================
+let resumedSavedRunThisSession = false;
+let bossMistakeCountThisRun = 0;
+let bossesDefeatedThisRun = 0;
+
+function addRealmStat(key, amount = 1){
+    const current = parseInt(localStorage.getItem(key) || "0", 10);
+    localStorage.setItem(key, String((Number.isFinite(current) ? current : 0) + amount));
+}
+
+function setRealmFlag(key){
+    localStorage.setItem(key, "true");
+}
+
+function updateRealmMaxStat(key, value){
+    const numericValue = Number(value || 0);
+    const current = parseInt(localStorage.getItem(key) || "0", 10);
+
+    if(Number.isFinite(numericValue) && numericValue > (Number.isFinite(current) ? current : 0)){
+        localStorage.setItem(key, String(numericValue));
+    }
+}
+
+function recordTimedTrialAchievementStats(accuracy, reachedRoom){
+    const safeAccuracy = Number.isFinite(Number(accuracy)) ? Number(accuracy) : 0;
+    const safeRoom = Number.isFinite(Number(reachedRoom)) ? Number(reachedRoom) : 0;
+
+    updateRealmMaxStat("commandNexusTimedBestRoom", safeRoom);
+    updateRealmMaxStat("commandNexusTimedBestAccuracy", safeAccuracy);
+
+    updateRealmMaxStat("macroHub_nexus_timedBestRoom", safeRoom);
+    updateRealmMaxStat("macroHub_nexus_timedBestAccuracy", safeAccuracy);
+
+    if(safeRoom >= 30 && safeAccuracy >= 80){
+        setRealmFlag("macroHub_nexus_trial_by_clock_complete");
+    }
+}
+
+function modeAllowsSave(){
+    return gameMode === "standard" || gameMode === "legendary";
+}
+
+function modeAllowsRealmProgress(){
+    return gameMode === "standard";
+}
+
+function getSaveKey(){
+    return `${SAVE_KEY}_${gameMode || "standard"}`;
+}
+
+function isBossRoomForMode(r){
+    if(gameMode === "exam") return false;
+    if(gameMode === "timed") return false;
+    if(gameMode === "bossRush") return true;
+    if(gameMode === "legendary") return r === 10 || r === 20 || r === 30;
+    return r === 10 || r === 20 || r === 30;
+}
+
+function getModeDisplayName(){
+    if(gameMode === "timed") return "Timed Trial";
+    if(gameMode === "exam") return "Exam Drill";
+    if(gameMode === "bossRush") return "Boss Rush";
+    if(gameMode === "legendary") return "Legendary Mode";
+    return "Standard Campaign";
+}
+
 function saveGameState(){
+    if(!modeAllowsSave()) return;
+
     const saveData = {
         room,
         bossHealth,
@@ -2155,6 +2332,7 @@ function saveGameState(){
         username,
         studentEmail,
         runID,
+        gameMode,
         conceptMemory,
         masteryState,
         adaptiveMode,
@@ -2166,6 +2344,10 @@ function saveGameState(){
         rapidGuessWarnings,
         rapidGuessLocked,
         savedAt: Date.now(),
+        achievementTracking: {
+            bossMistakeCountThisRun,
+            bossesDefeatedThisRun
+        },
 
         artifacts: {
             vaultAtlas: localStorage.getItem("vaultAtlas") === "true",
@@ -2174,11 +2356,14 @@ function saveGameState(){
         }
     };
 
-    localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+    localStorage.setItem(getSaveKey(), JSON.stringify(saveData));
     localStorage.setItem("gauntletRoom", String(room));
-    localStorage.setItem(REALM_STARTED_KEY, "true");
-    localStorage.setItem(REALM_STATUS_KEY, "contested");
-    localStorage.setItem(REALM_ROOM_KEY, String(room));
+
+    if(modeAllowsRealmProgress()){
+        localStorage.setItem(REALM_STARTED_KEY, "true");
+        localStorage.setItem(REALM_STATUS_KEY, "contested");
+        localStorage.setItem(REALM_ROOM_KEY, String(room));
+    }
 
     const autosave = document.getElementById("autosave");
     if(autosave){
@@ -2187,7 +2372,7 @@ function saveGameState(){
 }
 
 function loadSavedGame(){
-    const rawSave = localStorage.getItem(SAVE_KEY);
+    const rawSave = localStorage.getItem(getSaveKey());
     if(!rawSave) return false;
 
     try {
@@ -2204,6 +2389,7 @@ function loadSavedGame(){
         username = saveData.username || username || "";
         studentEmail = saveData.studentEmail || studentEmail || "";
         runID = saveData.runID || runID || "";
+        gameMode = saveData.gameMode || gameMode || "standard";
 
         conceptMemory = saveData.conceptMemory || {};
         masteryState = saveData.masteryState || { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
@@ -2218,6 +2404,9 @@ function loadSavedGame(){
         rapidGuessWarnings = Number(saveData.rapidGuessWarnings || 0);
         rapidGuessLocked = !!saveData.rapidGuessLocked;
 
+        bossMistakeCountThisRun = Number(saveData.achievementTracking?.bossMistakeCountThisRun || 0);
+        bossesDefeatedThisRun = Number(saveData.achievementTracking?.bossesDefeatedThisRun || 0);
+
         if(saveData.artifacts?.vaultAtlas) localStorage.setItem("vaultAtlas", "true");
         if(saveData.artifacts?.vaultDial) localStorage.setItem("vaultDial", "true");
         if(saveData.artifacts?.vaultLens) localStorage.setItem("vaultLens", "true");
@@ -2225,19 +2414,21 @@ function loadSavedGame(){
         return true;
     } catch(error){
         console.warn("Saved game could not be loaded:", error);
-        localStorage.removeItem(SAVE_KEY);
+        localStorage.removeItem(getSaveKey());
         return false;
     }
 }
 
 function clearSavedGame(){
-    localStorage.removeItem(SAVE_KEY);
-    localStorage.removeItem("gauntletRoom");
-    localStorage.removeItem("vaultAtlas");
-    localStorage.removeItem("vaultDial");
-    localStorage.removeItem("vaultLens");
-}
+    localStorage.removeItem(getSaveKey());
 
+    if(modeAllowsSave()){
+        localStorage.removeItem("gauntletRoom");
+        localStorage.removeItem("vaultAtlas");
+        localStorage.removeItem("vaultDial");
+        localStorage.removeItem("vaultLens");
+    }
+}
 
 function generatePseudonymFromEmail(email) {
     const prefixes = [
@@ -3093,23 +3284,186 @@ if (savedEmail && emailInput) {
     emailInput.value = savedEmail;
 }
 
-function hasSavedGame(){
-    return !!localStorage.getItem(SAVE_KEY);
+function hasSavedGame(mode = "standard"){
+    return !!localStorage.getItem(`${SAVE_KEY}_${mode}`);
 }
 
 function showContinueButtonIfSaved(){
     const btn = document.getElementById("continueRunBtn");
     if(!btn) return;
 
-    btn.style.display = hasSavedGame() ? "block" : "none";
+    btn.style.display = hasSavedGame("standard") ? "block" : "none";
+}
+
+function validateAndStoreEmailForModeSelect(){
+    let inputEmail = document.getElementById("emailInput").value.trim().toLowerCase();
+
+    if (!inputEmail) {
+        alert("An email is required to enter the Nexus.");
+        return false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(inputEmail)) {
+        alert("Enter a valid email address.");
+        return false;
+    }
+
+    studentEmail = inputEmail;
+    username = generatePseudonymFromEmail(studentEmail);
+
+    localStorage.setItem("gauntletEmail", studentEmail);
+    localStorage.setItem("gauntletUser", username);
+
+    return true;
+}
+
+function showModeSelect(){
+    if(!validateAndStoreEmailForModeSelect()) return;
+
+    document.getElementById("startScreen").style.display = "none";
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "flex";
+}
+
+function returnToTitleScreen(){
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "none";
+    document.getElementById("startScreen").style.display = "flex";
+    showContinueButtonIfSaved();
+}
+
+function startSelectedMode(mode){
+    gameMode = mode || "standard";
+    localStorage.setItem("commandNexusCurrentMode", gameMode);
+
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "none";
+
+    if(gameMode === "standard"){
+        startGame(false);
+        return;
+    }
+
+    resetRunStateForNewMode();
+    startGame(false);
+}
+
+function confirmReturnToModeMenu(){
+    showGameModal({
+        title: "Return to Nexus Menu?",
+        text: "Standard Campaign progress will be saved. Timed Trial and Exam Drill attempts will end.",
+        confirmText: "Return",
+        cancelText: "Stay",
+        onConfirm: function(){
+            if(gameMode === "standard"){
+                saveGameState();
+            }
+
+            if(gameMode === "timed"){
+                endTimedAttemptEarly();
+                return;
+            }
+
+            returnToModeSelectFromRun();
+        }
+    });
+}
+
+let activeModalConfirmAction = null;
+let activeModalCancelAction = null;
+
+function showGameModal({
+    title = "Signal Warning",
+    text = "",
+    confirmText = "Continue",
+    cancelText = "",
+    onConfirm = null,
+    onCancel = null
+} = {}){
+    const modal = document.getElementById("gameModal");
+    const titleEl = document.getElementById("gameModalTitle");
+    const textEl = document.getElementById("gameModalText");
+    const confirmBtn = document.getElementById("gameModalConfirm");
+    const cancelBtn = document.getElementById("gameModalCancel");
+
+    if(!modal || !titleEl || !textEl || !confirmBtn || !cancelBtn){
+        console.warn("Game modal elements are missing.");
+        return;
+    }
+
+    activeModalConfirmAction = onConfirm;
+    activeModalCancelAction = onCancel;
+
+    titleEl.innerText = title;
+    textEl.innerText = text;
+    confirmBtn.innerText = confirmText;
+
+    if(cancelText){
+        cancelBtn.innerText = cancelText;
+        cancelBtn.style.display = "inline-block";
+    } else {
+        cancelBtn.style.display = "none";
+    }
+
+    modal.style.display = "flex";
+
+    confirmBtn.onclick = function(){
+        const action = activeModalConfirmAction;
+        closeGameModal();
+
+        if(typeof action === "function"){
+            action();
+        }
+    };
+
+    cancelBtn.onclick = function(){
+        const action = activeModalCancelAction;
+        closeGameModal();
+
+        if(typeof action === "function"){
+            action();
+        }
+    };
+}
+
+function closeGameModal(){
+    const modal = document.getElementById("gameModal");
+    if(modal) modal.style.display = "none";
+
+    activeModalConfirmAction = null;
+    activeModalCancelAction = null;
+}
+
+function endTimedAttemptEarly(){
+    stopTimedModeClock();
+
+    const accuracy = totalAttempts > 0
+        ? Math.round((correctAnswers / totalAttempts) * 100)
+        : 0;
+
+    const reachedRoom = Math.max(timedHighestRoom || 1, room || 1);
+
+    localStorage.setItem("commandNexusTimedLastRoom", String(reachedRoom));
+    localStorage.setItem("commandNexusTimedLastAccuracy", String(accuracy));
+    localStorage.setItem("commandNexusTimedLastAttempts", String(totalAttempts));
+    localStorage.setItem("commandNexusTimedLastStreak", String(maxStreak));
+
+    recordTimedTrialAchievementStats(accuracy, reachedRoom);
+
+    returnToModeSelectFromRun();
 }
 
 function startNewRun(){
+    gameMode = "standard";
     clearSavedGame();
     startGame(false);
 }
 
 function continueSavedRun(){
+    gameMode = "standard";
+    resumedSavedRunThisSession = true;
     startGame(true);
 }
 
@@ -3162,6 +3516,9 @@ function startGame(shouldResume = false) {
     username = generatePseudonymFromEmail(studentEmail);
 
     const hasSavedRun = shouldResume ? loadSavedGame() : false;
+    if(!hasSavedRun){
+        resumedSavedRunThisSession = false;
+    }
 
     if(!hasSavedRun){
         bossCheckpoint = 1;
@@ -3171,9 +3528,12 @@ function startGame(shouldResume = false) {
     localStorage.setItem("gauntletEmail", studentEmail);
     localStorage.setItem("gauntletUser", username);
     localStorage.setItem("gauntletRunID", runID);
-    localStorage.setItem(REALM_STARTED_KEY, "true");
-    localStorage.setItem(REALM_STATUS_KEY, "contested");
-    localStorage.setItem(REALM_ROOM_KEY, String(room));
+
+    if(modeAllowsRealmProgress()){
+        localStorage.setItem(REALM_STARTED_KEY, "true");
+        localStorage.setItem(REALM_STATUS_KEY, "contested");
+        localStorage.setItem(REALM_ROOM_KEY, String(room || 1));
+    }
 
     sendGameData({
         runID: runID,
@@ -3197,32 +3557,40 @@ if(!hasSavedRun){
     bossPool = [];
     calcBag = [];
     conceptMemory = {};
-    masteryState = { byTag: {}, byObjective: {}, recent: [] };
+    masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
     tagHistory = [];
     lastTypes = [];
     adaptiveMode = "support";
     resetRemediationState();
-	rapidGuessHistory = [];
-	rapidGuessWarnings = 0;
-	rapidGuessLocked = false;
-	bossMistakeCountThisRun = 0;
-    bossesDefeatedThisRun = 0
+    rapidGuessHistory = [];
+    rapidGuessWarnings = 0;
+    rapidGuessLocked = false;
+    timedHighestRoom = 1;
+    timedSetbacks = 0;
+    bossMistakeCountThisRun = 0;
+    bossesDefeatedThisRun = 0;
 
-    localStorage.removeItem("gauntletRoom");
+    if(modeAllowsSave()){
+        localStorage.removeItem("gauntletRoom");
+        localStorage.removeItem("vaultAtlas");
+        localStorage.removeItem("vaultDial");
+        localStorage.removeItem("vaultLens");
+    }
 
-    // Command Nexus artifact keys — keep these matched to your actual Command Nexus IDs.
-    localStorage.removeItem("vaultAtlas");
-    localStorage.removeItem("vaultDial");
-    localStorage.removeItem("vaultLens");
+    if(modeAllowsRealmProgress()){
+        localStorage.removeItem(REALM_COMPLETE_KEY);
+        localStorage.setItem(REALM_STATUS_KEY, "contested");
+        localStorage.setItem(REALM_ROOM_KEY, "1");
+    }
 
     questionHistory = {
-        easy: [], medium: [], hard: [], elite: [], calculation: [],
-        easyBoss: [], mediumBoss: [], finalBoss: []
+        easy: [], medium: [], hard: [], elite: [], legendary: [], calculation: [],
+        easyBoss: [], mediumBoss: [], finalBoss: [], legendaryBoss: []
     };
 
     usedQuestions = {
-        easy: [], medium: [], hard: [], elite: [],
-        easyBoss: [], mediumBoss: [], finalBoss: []
+        easy: [], medium: [], hard: [], elite: [], legendary: [],
+        easyBoss: [], mediumBoss: [], finalBoss: [], legendaryBoss: []
     };
 }
     
@@ -3231,6 +3599,10 @@ if(!hasSavedRun){
 // =============================================
 // Shows main game elements and restores vault visuals
     document.getElementById("startScreen").style.display = "none";
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "none";
+    document.querySelector(".top-panel").style.display = "flex";
+    document.getElementById("gameShell").style.display = "flex";
     document.getElementById("gameBox").style.display = "block";
     document.getElementById("artifactVault").style.display = "block";
     document.querySelectorAll(".torch").forEach(t => t.style.display = "block");
@@ -3254,10 +3626,232 @@ if(!hasSavedRun){
     }
   
 // Start game loop: music + timer + first question
+    initializeRunForMode(gameMode);
     bgMusic.play().catch(e => console.log("Audio started"));
     startTime = Date.now(); 
     loadQuestion();
 }
+
+function resetRunStateForNewMode(){
+    room = 1;
+    bossHealth = 3;
+    bossCheckpoint = 1;
+    streak = 0;
+    maxStreak = 0;
+    totalAttempts = 0;
+    correctAnswers = 0;
+    bossPool = [];
+    if(typeof calcBag !== "undefined") calcBag = [];
+    conceptMemory = {};
+    masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
+    tagHistory = [];
+    lastTypes = [];
+    adaptiveMode = "support";
+    resetRemediationState();
+    rapidGuessHistory = [];
+    rapidGuessWarnings = 0;
+    rapidGuessLocked = false;
+    timedHighestRoom = 1;
+    timedSetbacks = 0;
+    bossMistakeCountThisRun = 0;
+    bossesDefeatedThisRun = 0;
+    resumedSavedRunThisSession = false;
+
+    questionHistory = {
+        easy: [], medium: [], hard: [], elite: [], legendary: [], calculation: [],
+        easyBoss: [], mediumBoss: [], finalBoss: [], legendaryBoss: []
+    };
+
+    usedQuestions = {
+        easy: [], medium: [], hard: [], elite: [], legendary: [],
+        easyBoss: [], mediumBoss: [], finalBoss: [], legendaryBoss: []
+    };
+}
+
+function initializeRunForMode(mode){
+    gameMode = mode || "standard";
+
+    const autosave = document.getElementById("autosave");
+    if(autosave){
+        autosave.innerText = gameMode === "timed"
+            ? "⏱ Timed Trial Active"
+            : gameMode === "exam"
+                ? "✎ Exam Drill Active"
+                : gameMode === "legendary"
+                    ? "🔥 Legendary Mode Active"
+                    : gameMode === "bossRush"
+                        ? "⚔ Boss Rush Active"
+                        : "💾 Progress Saved Locally";
+    }
+
+    if(gameMode === "timed"){
+        startTimedModeClock();
+    } else {
+        stopTimedModeClock();
+    }
+}
+
+function startTimedModeClock(){
+    timedModeEndTime = Date.now() + timedModeDurationMs;
+
+    const hud = document.getElementById("timedModeHud");
+    if(hud) hud.style.display = "flex";
+
+    updateTimedModeClock();
+
+    if(timedModeTimerInterval){
+        clearInterval(timedModeTimerInterval);
+    }
+
+    timedModeTimerInterval = setInterval(updateTimedModeClock, 250);
+}
+
+function stopTimedModeClock(){
+    if(timedModeTimerInterval){
+        clearInterval(timedModeTimerInterval);
+        timedModeTimerInterval = null;
+    }
+
+    const hud = document.getElementById("timedModeHud");
+    if(hud) hud.style.display = "none";
+
+    const timerDisplay = document.getElementById("timerDisplay");
+    if(timerDisplay){
+        timerDisplay.classList.remove("timer-warning");
+        timerDisplay.innerText = "10:00";
+    }
+}
+
+function updateTimedModeClock(){
+    if(gameMode !== "timed" || !timedModeEndTime) return;
+
+    const remainingMs = Math.max(0, timedModeEndTime - Date.now());
+    const totalSeconds = Math.ceil(remainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const timerDisplay = document.getElementById("timerDisplay");
+    if(timerDisplay){
+        timerDisplay.innerText = `${minutes}:${String(seconds).padStart(2, "0")}`;
+        timerDisplay.classList.toggle("timer-warning", remainingMs <= 60 * 1000);
+    }
+
+    if(remainingMs <= 0){
+        endTimedModeRun();
+    }
+}
+
+function endTimedModeRun(){
+    if(gameMode !== "timed") return;
+
+    stopTimedModeClock();
+    gameMode = "timed-complete";
+
+    const accuracy = totalAttempts > 0
+        ? Math.round((correctAnswers / totalAttempts) * 100)
+        : 0;
+
+    localStorage.setItem("commandNexusTimedLastRoom", String(room));
+    localStorage.setItem("commandNexusTimedLastHighestRoom", String(timedHighestRoom));
+    localStorage.setItem("commandNexusTimedLastAccuracy", String(accuracy));
+    localStorage.setItem("commandNexusTimedLastAttempts", String(totalAttempts));
+    localStorage.setItem("commandNexusTimedLastStreak", String(maxStreak));
+    localStorage.setItem("commandNexusTimedLastSetbacks", String(timedSetbacks));
+
+    recordTimedTrialAchievementStats(accuracy, timedHighestRoom);
+
+    sendGameData({
+        runID: runID,
+        game: "The Command Nexus",
+        event: "timed_complete",
+        user: username,
+        email: studentEmail,
+        room: room,
+        questionId: 0,
+        correct: 1,
+        tag: "",
+        type: "",
+        objective: "",
+        responseTime: 0,
+        attempt: totalAttempts,
+        streak: streak,
+        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        adaptiveMode: "timed_complete",
+        totalTime: timedModeDurationMs,
+        accuracy: accuracy / 100,
+        maxStreak: maxStreak,
+        totalAttempts: totalAttempts
+    });
+
+    document.getElementById("bossMessage").innerText = "";
+    document.getElementById("formulaHint").innerText = "";
+    document.getElementById("artifactDrop").style.display = "none";
+    document.getElementById("questionImageBox").style.display = "none";
+
+    document.getElementById("question").innerHTML = `
+        <span class="boss-title">TIME EXPIRED</span>
+        <div class="boss-q">
+            You reached as far as Room ${timedHighestRoom}.<br><br>
+            Final Room: ${room}<br>
+            Accuracy: ${accuracy}%<br>
+            Total Attempts: ${totalAttempts}<br>
+            Best Streak: ${maxStreak}<br>
+            Setbacks Taken: ${timedSetbacks}
+        </div>
+    `;
+
+    document.getElementById("answers").innerHTML = `
+        <button class="continue-btn" onclick="restartTimedMode()">Retry Timed Trial</button>
+        <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
+    `;
+
+    document.getElementById("message").innerText = "The trial ends. The Nexus remembers.";
+}
+
+function restartTimedMode(){
+    gameMode = "timed";
+    resetRunStateForNewMode();
+    startSelectedMode("timed");
+}
+
+function returnToModeSelectFromRun(){
+    stopTimedModeClock();
+    document.getElementById("gameBox").style.display = "none";
+    document.getElementById("artifactVault").style.display = "none";
+    document.getElementById("modeSelectScreen").style.display = "flex";
+    document.querySelector(".top-panel").style.display = "none";
+    document.getElementById("gameShell").style.display = "none";
+}
+
+function getDifficultyForMode(){
+    if(gameMode === "exam" || gameMode === "timed"){
+        return (room <= 10) ? "easy"
+            : (room <= 20) ? "medium"
+            : "hard";
+    }
+
+    if(gameMode === "legendary"){
+        return (room === 10 || room === 20 || room === 30)
+            ? "legendaryBoss"
+            : "legendary";
+    }
+
+    if(gameMode === "bossRush"){
+        return (room <= 10) ? "easyBoss"
+            : (room <= 20) ? "mediumBoss"
+            : "finalBoss";
+    }
+
+    return (room <= 9) ? "easy"
+         : (room === 10) ? "easyBoss"
+         : (room <= 19) ? "medium"
+         : (room === 20) ? "mediumBoss"
+         : (room <= 25) ? "hard"
+         : (room <= 29) ? "calculation"
+         : "finalBoss";
+}
+
+
 	 
 // =============================================
 // INPUT SHORTCUT — SAFE TO KEEP OR REMOVE
@@ -3269,10 +3863,10 @@ document.getElementById("emailInput").addEventListener("keypress", function(even
     if (event.key === "Enter") {
         event.preventDefault();
 
-        if(hasSavedGame()){
+        if(hasSavedGame("standard")){
             continueSavedRun();
         } else {
-            startNewRun();
+            showModeSelect();
         }
     }
 });
@@ -4372,15 +4966,9 @@ function loadQuestion() {
 	imageBox.style.display = "none";
 
     // 1. Determine Difficulty and Boss Status
-    let diff = (room <= 9) ? "easy"
-             : (room === 10) ? "easyBoss"
-             : (room <= 19) ? "medium"
-             : (room === 20) ? "mediumBoss"
-             : (room <= 25) ? "hard"
-             : (room <= 29) ? "calculation"
-             : "finalBoss";
+    let diff = getDifficultyForMode();
 
-   const isBoss = diff.includes("Boss");
+   const isBoss = isBossRoomForMode(room) && diff.includes("Boss");
 
    // Only reset health if the bossPool is currently empty (meaning a new encounter)
      if (isBoss && (!bossPool || bossPool.length === 0)) {
@@ -4413,7 +5001,10 @@ function loadQuestion() {
     if (isBoss) {
         // 1. If it's a new fight (Health 3), decide the "Theme" of the boss
         if (bossHealth === 3 || !bossPool || bossPool.length === 0) {
-            const bank = [...questionBanks[diff]];
+            const fallbackBossBank = room === 10 ? questionBanks.easyBoss
+                : room === 20 ? questionBanks.mediumBoss
+                : questionBanks.finalBoss;
+            const bank = [...(questionBanks[diff] || fallbackBossBank || [])];
             let chosenTag = getWeakestTag();
 
             bossPool = chosenTag 
@@ -4426,7 +5017,7 @@ function loadQuestion() {
         }
 
         // 2. Select the specific question based on boss health
-        currentQuestion = shuffleOptions(bossPool[3 - bossHealth]);
+        currentQuestion = shuffleOptions(bossPool[3 - bossHealth] || bossPool[0] || (questionBanks.finalBoss || questionBanks.hard || questionBanks.medium || questionBanks.easy || [])[0]);
 
 		if(currentQuestion.image){
    		imageBox.innerHTML = `<img src="${currentQuestion.image}" alt="Question graph">`;
@@ -4682,7 +5273,7 @@ function answer(choice) {
    
     totalAttempts++;
    
-    const isBossRoom = (room === 10 || room === 20 || room === 30);
+    const isBossRoom = isBossRoomForMode(room);
     const msgElement = document.getElementById("message");
     const wizard = document.getElementById("wizardImage");
 const isCorrect = (choice === currentQuestion.a);
@@ -4807,7 +5398,7 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
 
 		correctAnswers++;
 		addRealmStat("macroHub_totalCorrectAnswers", 1);
-		addRealmStat("macroHub_engine_correctTotal", 1);
+		addRealmStat("macroHub_nexus_correctTotal", 1);
 		handleStreakVisuals();
        
         // --- STAGED REMEDIATION SUCCESS PATH ---
@@ -4945,7 +5536,14 @@ if(remediationState.active){
     // AND it wasn't a Boss Room (or a Detour).
    msgElement.innerHTML = "";
    room++;
+   if(gameMode === "timed"){
+       timedHighestRoom = Math.max(timedHighestRoom, room);
+   }
    saveGameState();
+   if((gameMode === "exam" || gameMode === "timed") && room > 30){
+       handlePracticeModeComplete();
+       return;
+   }
    showHallwayTransition(currentQuestion.feedback);
    return;
     }      
@@ -5054,6 +5652,10 @@ if (!remediationState.active && currentQuestion.tag && shouldTriggerDetour(curre
 
 // Never fall back behind the most recently cleared boss gate
 	room = Math.max(bossCheckpoint, newRoom);
+
+    if(gameMode === "timed"){
+        timedSetbacks++;
+    }
 
     saveGameState();
 
@@ -5421,21 +6023,154 @@ function generateCode(name, acc, streak, total){
 //
 // This is a PRESENTATION layer, not a logic layer.
 // =============================================     
-function handleVictory() {
-	localStorage.setItem(REALM_STARTED_KEY, "true");
-	localStorage.setItem(REALM_COMPLETE_KEY, "true");
-	localStorage.setItem(REALM_STATUS_KEY, "restored");
-	localStorage.setItem(REALM_ROOM_KEY, "30");
 
-	localStorage.setItem("macroHub_engine_artifactsCollected", "3");
+function handleLegendaryVictory(){
+    setRealmFlag("macroHub_nexus_legendary_complete");
+    setRealmFlag("commandNexusLegendaryComplete");
+    clearSavedGame();
+
+    bgMusic.pause();
+    bossMusic.pause();
+    finalBossMusic.pause();
+    if (typeof sfxVictory !== 'undefined') {
+        sfxVictory.currentTime = 0;
+        sfxVictory.play();
+    }
+
+    const totalTimeMs = Date.now() - startTime;
+    const accuracy = totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0;
+    const timeString = formatTime(totalTimeMs);
+    const verificationCode = generateCode(username, accuracy, maxStreak, totalTimeMs);
+
+    sendGameData({
+        runID: runID,
+        game: "The Command Nexus",
+        event: "legendary_complete",
+        user: username,
+        email: studentEmail,
+        room: room,
+        questionId: 0,
+        correct: 1,
+        tag: "",
+        type: "",
+        objective: "",
+        responseTime: 0,
+        attempt: totalAttempts,
+        streak: streak,
+        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        adaptiveMode: "legendary_complete",
+        totalTime: totalTimeMs,
+        accuracy: accuracy / 100,
+        maxStreak: maxStreak,
+        totalAttempts: totalAttempts,
+        verificationCode: verificationCode
+    });
+
+    document.getElementById("bossMessage").innerText = "";
+    document.getElementById("formulaHint").innerText = "";
+    document.getElementById("artifactDrop").style.display = "none";
+    document.getElementById("questionImageBox").style.display = "none";
+
+    document.getElementById("question").innerHTML = `
+        <span class="boss-title">LEGENDARY NEXUS RUN COMPLETE</span>
+        <div class="boss-q">
+            The Command Nexus has no more cover. You completed the highest-pressure run.<br><br>
+            Accuracy: ${accuracy}%<br>
+            Best Streak: ${maxStreak}<br>
+            Time: ${timeString}<br>
+            Verification Code: <span id="vCode">${verificationCode}</span>
+        </div>
+    `;
+
+    document.getElementById("answers").innerHTML = `
+        <button class="continue-btn" onclick="copyResults()">Copy Results</button>
+        <button class="continue-btn" onclick="location.reload()">Return to Start</button>
+    `;
+
+    document.getElementById("message").innerText = "Legendary command verified.";
+}
+
+function handlePracticeModeComplete(){
+    const accuracy = totalAttempts > 0
+        ? Math.round((correctAnswers / totalAttempts) * 100)
+        : 0;
+
+    if(gameMode === "exam"){
+        setRealmFlag("macroHub_nexus_exam_complete");
+        setRealmFlag("commandNexusExamComplete");
+    }
+
+    sendGameData({
+        runID: runID,
+        game: "The Command Nexus",
+        event: gameMode === "exam" ? "exam_complete" : "practice_complete",
+        user: username,
+        email: studentEmail,
+        room: room,
+        questionId: 0,
+        correct: 1,
+        tag: "",
+        type: "",
+        objective: "",
+        responseTime: 0,
+        attempt: totalAttempts,
+        streak: streak,
+        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        adaptiveMode: gameMode === "exam" ? "exam_complete" : "practice_complete",
+        accuracy: accuracy / 100,
+        maxStreak: maxStreak,
+        totalAttempts: totalAttempts
+    });
+
+    stopTimedModeClock();
+    document.getElementById("bossMessage").innerText = "";
+    document.getElementById("formulaHint").innerText = "";
+    document.getElementById("artifactDrop").style.display = "none";
+    document.getElementById("questionImageBox").style.display = "none";
+
+    document.getElementById("question").innerHTML = `
+        <span class="boss-title">${gameMode === "exam" ? "EXAM DRILL COMPLETE" : "PRACTICE RUN COMPLETE"}</span>
+        <div class="boss-q">
+            Accuracy: ${accuracy}%<br>
+            Total Attempts: ${totalAttempts}<br>
+            Best Streak: ${maxStreak}<br><br>
+            No artifacts were awarded. No Nexus campaign progress was changed.
+        </div>
+    `;
+
+    document.getElementById("answers").innerHTML = `
+        <button class="continue-btn" onclick="startSelectedMode('${gameMode === "exam" ? "exam" : "timed"}')">Run Again</button>
+        <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
+    `;
+
+    document.getElementById("message").innerText = "Practice record saved.";
+}
+
+function handleVictory() {
+    if(gameMode === "legendary"){
+        handleLegendaryVictory();
+        return;
+    }
+
+    if(gameMode === "exam"){
+        handlePracticeModeComplete();
+        return;
+    }
+
+    localStorage.setItem(REALM_STARTED_KEY, "true");
+    localStorage.setItem(REALM_COMPLETE_KEY, "true");
+    localStorage.setItem(REALM_STATUS_KEY, "restored");
+    localStorage.setItem(REALM_ROOM_KEY, "30");
+
+    localStorage.setItem("macroHub_nexus_artifactsCollected", "3");
 
 if(resumedSavedRunThisSession){
-    setRealmFlag("macroHub_engine_resume_finish_complete");
+    setRealmFlag("macroHub_nexus_resume_finish_complete");
     setRealmFlag("macroHub_returnAndRebuild_complete");
 }
 
 if(bossesDefeatedThisRun >= 3 && bossMistakeCountThisRun === 0){
-    setRealmFlag("macroHub_engine_perfect_calibration_complete");
+    setRealmFlag("macroHub_nexus_perfect_calibration_complete");
 }
     clearSavedGame();
 
@@ -5734,6 +6469,7 @@ function sendGameData(data) {
 </script>
 </body>
 </html>
+
 
 
 
