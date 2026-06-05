@@ -1113,64 +1113,40 @@ button:active {
    9. ANIMATION SYSTEM — SAFE TO CUSTOMIZE (WITH CARE)
 ========================================= */
 
+/* Ambient civic-light flicker */	
 @keyframes torchFlicker {
   0%, 100% {
     filter: brightness(1);
   }
-
   25% {
     filter: brightness(1.05) saturate(1.05);
   }
-
   50% {
     filter: brightness(0.96) saturate(0.98);
   }
-
   75% {
     filter: brightness(1.04) saturate(1.04);
   }
 }
 
+/* Damage feedback */	
 @keyframes hitshake {
-  0% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-8px);
-  }
-
-  50% {
-    transform: translateX(8px);
-  }
-
-  75% {
-    transform: translateX(-6px);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  50% { transform: translateX(8px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
 }
 
+/* Boss-specific hit feedback (stronger shake) */    	
 @keyframes bossShake {
-  10%, 90% {
-    transform: translate3d(-1px, 0, 0);
-  }
-
-  20%, 80% {
-    transform: translate3d(2px, 0, 0);
-  }
-
-  30%, 50%, 70% {
-    transform: translate3d(-4px, 0, 0);
-  }
-
-  40%, 60% {
-    transform: translate3d(4px, 0, 0);
-  }
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
 }
 
+/* Current room highlight animation (maze tracker) */   	
 @keyframes activePulse {
   0% {
     transform: scale(1.06);
@@ -1178,7 +1154,6 @@ button:active {
       0 0 8px rgba(100,170,255,0.68),
       inset 0 0 10px rgba(0,0,0,0.62);
   }
-
   45% {
     transform: scale(1.13);
     box-shadow:
@@ -1187,7 +1162,6 @@ button:active {
       0 0 42px rgba(24,82,135,0.3),
       inset 0 0 12px rgba(0,0,0,0.66);
   }
-
   70% {
     transform: scale(1.09);
     box-shadow:
@@ -1195,7 +1169,6 @@ button:active {
       0 0 24px rgba(240,200,106,0.22),
       inset 0 0 11px rgba(0,0,0,0.66);
   }
-
   100% {
     transform: scale(1.11);
     box-shadow:
@@ -1205,6 +1178,10 @@ button:active {
   }
 }
 
+
+
+	
+/* Victory text animation (end screen emphasis) */   
 @keyframes victoryGlow {
   0%, 100% {
     transform: scale(1);
@@ -1213,7 +1190,6 @@ button:active {
       0 0 18px rgba(100,170,255,0.24),
       0 2px 6px rgba(0,0,0,0.9);
   }
-
   50% {
     transform: scale(1.08);
     text-shadow:
@@ -1224,48 +1200,37 @@ button:active {
   }
 }
 
+/* Idle boss movement */	
 @keyframes bossFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
+/* Temporary feedback text fade-out */   
 @keyframes fadeOut {
-  0%, 70% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
+/* Wizard idle animation (subtle movement) */  
 @keyframes wizardFloat {
-  0%,100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-5px);
-  }
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
+
 
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(8px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+/* General pulse animation for relics */   	
 @keyframes relicPulse {
   0%,100% {
     transform: scale(1.05);
@@ -1274,7 +1239,6 @@ button:active {
       drop-shadow(0 0 18px rgba(240,200,106,0.32))
       drop-shadow(0 0 24px rgba(0,0,0,0.58));
   }
-
   50% {
     transform: scale(1.1);
     filter:
@@ -1284,12 +1248,12 @@ button:active {
   }
 }
 
+/* Streak icon pulse */
 @keyframes pulseControl {
   0%,100% {
     transform: scale(1);
     opacity: 0.9;
   }
-
   50% {
     transform: scale(1.08);
     opacity: 1;
@@ -1311,7 +1275,8 @@ button:active {
     max-width:700px;
     margin:0 auto 10px auto;
 }
-   
+
+/* TITLE ABOVE MAZE */	
 .top-title{
     font-size:22px;
     font-weight:bold;
@@ -1336,6 +1301,8 @@ button:active {
     padding:10px 14px;
 }
 
+/* Main Game Row */
+/* Main horizontal layout: wizard + game area */
 .main-panel{
     display:flex;
     gap:20px;
@@ -1344,59 +1311,57 @@ button:active {
     align-items: stretch;
 }
    
+/* Main Game Row */
+/* Main horizontal layout: wizard + game area */
 #gameShell{
     display:flex;
     gap:20px;
     max-width:900px;
     width:100%;
     margin:0 auto;
-
     background: linear-gradient(
         180deg,
         rgba(6,14,28,0.96),
         rgba(2,5,12,0.98)
     );
-
     padding:20px;
     border-radius:16px;
-
     border:1px solid rgba(120,180,255,0.26);
-
     box-shadow:
        0 0 30px rgba(0,0,0,0.92),
        0 0 58px rgba(80,140,220,0.18),
        0 0 76px rgba(240,200,106,0.10),
        inset 0 0 42px rgba(0,0,0,0.76);
 }
-   
+	
+
+/* Wizard Box */
+/* Custodian display panel — fixed width, do not remove flex settings */	
 #wizardBox{
     width:160px;
     min-width:160px;
     min-height:200px;
-
     background: linear-gradient(
         180deg,
         rgba(18,54,92,0.92),
         rgba(4,10,20,0.98)
     );
-
     border-radius:12px;
     padding:10px;
-
     display:flex;
     flex-direction: column;
     justify-content:center;
     align-items:center;    
     gap:6px;
-
     border:1px solid rgba(120,180,255,0.28);
-
     box-shadow:
         inset 0 0 26px rgba(0,0,0,0.8),
         0 0 18px rgba(80,140,220,0.16),
         0 0 30px rgba(240,200,106,0.08);
 }
 
+
+/* Wizard Name */	
 #wizardName {
     font-size: 12px;
     letter-spacing: 1px;
@@ -1407,25 +1372,22 @@ button:active {
     opacity: 0.92;
     text-align: center;
     font-weight: 600;
-
     border-bottom: 1px solid rgba(240,200,106,0.32);
     padding-bottom: 2px;
-
     text-shadow:
         0 0 6px rgba(100,170,255,0.48),
         0 0 12px rgba(240,200,106,0.16),
-        0 2px 5px rgba(0,0,0,0.85);
 }
 
+/* Wizard Image */
+/* Protocol Advisor visual + floating animation */
 #wizardImage{
     width:100%;
     max-width:180px;
-
     filter:
         drop-shadow(0 0 12px rgba(100,170,255,0.62))
         drop-shadow(0 0 24px rgba(240,200,106,0.22))
         drop-shadow(0 0 30px rgba(0,0,0,0.84));
-
     animation: wizardFloat 4s ease-in-out infinite, torchFlicker 5s infinite;
 }
     
@@ -1433,17 +1395,17 @@ button:active {
    11. BOSS MODE (UI STATE OVERRIDES) — DO NOT MODIFY STRUCTURE
 ========================================= */
 
+/* Center layout when wizard is removed */
 .boss-mode #wizardBox{
     display:none;
 }
 
+/* Center and slightly constrain game area for boss mode */
 .boss-mode #gameBox{
     max-width:900px;
     width:90%;
     margin:0 auto;
-
     border-color: rgba(240,200,106,0.72);
-
     box-shadow:
         0 0 34px rgba(100,170,255,0.46),
         0 0 72px rgba(240,200,106,0.24),
@@ -1459,11 +1421,10 @@ button:active {
     margin:10px auto;
 }
    
+/* Center layout when wizard is removed */
 .boss-mode #gameShell{
     justify-content:center;
-
     border-color: rgba(120,180,255,0.42);
-
     box-shadow:
        0 0 36px rgba(0,0,0,0.94),
        0 0 64px rgba(80,140,220,0.26),
@@ -1514,11 +1475,11 @@ Every pixel matters.
 ========================================= */
 
 @media (max-width: 768px){
-  .fullscreenBtn{
+  .fullscreenBtn,
+  .return-menu-btn{
     display: none !important;
   }
 
-  /* overall page tightening */
   .dungeon-container{
     gap: 8px;
     margin-top: 4px;
@@ -1539,49 +1500,12 @@ Every pixel matters.
     text-align: center;
   }
 
-  .fullscreenBtn{
-    position: static;
-    display: block;
-    align-self: flex-start;
-    margin: 0 0 4px 0;
-    padding: 6px 10px;
-    font-size: 11px;
-  }
-
-/* =========================================
-   MAZE TRACK (PROGRESSION GRID)
-
-Controls:
-- 30-room visual tracker (10x3 grid)
-- player position feedback
-- boss indicators
-
------------------------------------------
-SAFE TO EDIT:
-- box size (.maze-box)
-- spacing (gap)
-- colors and glow
-
------------------------------------------
-USE CAUTION:
-- grid-template-columns (must stay 10)
-- extreme sizing (can overflow screen)
-
------------------------------------------
-DO NOT CHANGE:
-- total structure (30 rooms)
-
------------------------------------------
-TIP:
-On mobile, shrinking gap and font-size
-saves a LOT of vertical space.
-
-========================================= */
   #mazeTrackContainer{
     width: 100%;
     max-width: 100%;
     padding: 2px 4px;
     margin: 0 auto;
+    box-sizing: border-box;
   }
 
   #mazeTrack{
@@ -1604,39 +1528,11 @@ saves a LOT of vertical space.
     height: 16px;
   }
 
-/* =========================================
-   ARTIFACT VAULT (REWARD DISPLAY)
-
-Controls:
-- unlocked items
-- visual reward system
-- top HUD footprint
-
------------------------------------------
-SAFE TO EDIT:
-- icon size
-- spacing
-- label text
-
------------------------------------------
-USE CAUTION:
-- opacity (controls locked vs unlocked)
-- layout (affects mobile height)
-
------------------------------------------
-DO NOT MODIFY:
-- .artifactSlot.unlocked (JS controlled)
-
------------------------------------------
-TIP:
-If mobile is too tall, shrink this section
-or hide labels entirely.
-
-========================================= */
   #artifactVault{
     width: 100%;
     max-width: 100%;
     padding: 4px 6px;
+    box-sizing: border-box;
   }
 
   #artifactVault h3{
@@ -1668,7 +1564,6 @@ or hide labels entirely.
     margin-top: 2px;
   }
 
-  /* main stack */
   .main-panel{
     flex-direction: column;
     align-items: center;
@@ -1683,31 +1578,14 @@ or hide labels entirely.
     padding: 6px;
     gap: 6px;
     margin: 0 auto;
+    box-sizing: border-box;
+    border-color: rgba(56,189,248,0.22);
+    box-shadow:
+       0 0 24px rgba(0,0,0,0.90),
+       0 0 38px rgba(56,189,248,0.14),
+       inset 0 0 30px rgba(0,0,0,0.78);
   }
 
-/* =========================================
-   WIZARD PANEL — SAFE TO RESIZE
-
-Controls:
-- wizard image
-- wizard name
-- vertical footprint
-
------------------------------------------
-SAFE TO EDIT:
-- width / max-width (mobile especially)
-- padding (reduce for smaller screens)
-- image size (#wizardImage)
-
------------------------------------------
-DO NOT REMOVE:
-- flex layout (keeps alignment correct)
-
------------------------------------------
-TIP:
-If mobile feels cramped, shrink THIS first.
-
-========================================= */
   #wizardBox{
     width: 100%;
     max-width: 170px;
@@ -1717,6 +1595,7 @@ If mobile feels cramped, shrink THIS first.
     padding-top: 6px;
     gap: 2px;
     margin: 0 auto;
+    box-sizing: border-box;
   }
 
   #wizardName{
@@ -1735,11 +1614,11 @@ If mobile feels cramped, shrink THIS first.
     display: block;
   }
 
-  /* game box tighter */
   #gameBox{
     width: 100%;
     padding: 8px;
     margin: 0 auto;
+    box-sizing: border-box;
   }
 
   #autosave{
@@ -1787,34 +1666,7 @@ If mobile feels cramped, shrink THIS first.
     height: auto;
     text-align: center;
   }
-/* =========================================
-   ANSWER SYSTEM (INTERACTION CORE)
 
-Controls:
-- layout of answer choices
-- button sizing and spacing
-
------------------------------------------
-SAFE TO EDIT:
-- grid vs column layout
-- button size (min-height)
-- font size
-
------------------------------------------
-USE CAUTION:
-- making buttons too small
-- changing layout drastically
-
------------------------------------------
-COMMON OPTIONS:
-- 2x2 grid (compact, less scrolling)
-- 1 column (easier reading, more scroll)
-
------------------------------------------
-TIP:
-2x2 grid is best for mobile balance.
-
-========================================= */
   .answers{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1831,10 +1683,220 @@ TIP:
     margin: 0;
     border-radius: 10px;
   }
+
+  .sound-toggle{
+    right: 14px;
+    bottom: 14px;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
 }
 
+
 /* =========================================
-   13. SOUND ON/OFF
+   13. MODE SELECT + TIMED TRIAL HUD
+   Command Nexus version
+========================================= */
+
+.mode-select-screen{
+  position:fixed;
+  inset:0;
+  z-index:110;
+  align-items:flex-start;
+  justify-content:center;
+  overflow-y:auto;
+  padding:30px;
+  background:
+    linear-gradient(rgba(2,5,12,.42), rgba(2,5,12,.78)),
+    url('start screen image.png');
+  background-size:cover;
+  background-position:center;
+}
+
+.mode-select-panel{
+  width:min(1100px, 100%);
+  padding:28px;
+  border-radius:20px;
+  background:rgba(6,14,28,.88);
+  border:1px solid rgba(120,180,255,.34);
+  box-shadow:
+    0 0 36px rgba(0,0,0,.84),
+    0 0 44px rgba(80,140,220,.20),
+    inset 0 0 36px rgba(0,0,0,.64);
+  text-align:center;
+}
+
+.mode-title{
+  margin:0;
+  font-size:clamp(38px, 5vw, 68px);
+  letter-spacing:4px;
+  color:#f0c86a;
+  text-shadow:
+    0 0 14px rgba(240,200,106,.62),
+    0 0 28px rgba(80,140,220,.28),
+    0 3px 8px rgba(0,0,0,.9);
+}
+
+.mode-subtitle{
+  margin:8px auto 26px;
+  color:#c9d4e6;
+  font-size:20px;
+}
+
+.mode-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:18px;
+}
+
+.mode-card{
+  min-height:330px;
+  padding:0;
+  overflow:hidden;
+  border-radius:18px;
+  border:1px solid rgba(120,180,255,.30);
+  background:rgba(6,14,28,.94);
+  color:#e6ecf5;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  text-align:left;
+  box-shadow:
+    0 0 22px rgba(0,0,0,.68),
+    inset 0 0 18px rgba(0,0,0,.58);
+  transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.mode-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  border-color:rgba(240,200,106,.78);
+  box-shadow:
+    0 0 28px rgba(80,140,220,.32),
+    0 0 38px rgba(240,200,106,.16),
+    inset 0 0 18px rgba(0,0,0,.62);
+}
+
+.mode-card img{
+  width:100%;
+  height:240px;
+  object-fit:cover;
+  border-bottom:1px solid rgba(240,200,106,.22);
+  background:linear-gradient(180deg, rgba(24,82,135,.80), rgba(6,14,28,.98));
+}
+
+.mode-card-title{
+  display:block;
+  padding:18px 16px 20px;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:1px;
+  color:#f0c86a;
+  text-align:center;
+}
+
+.mode-card-text{
+  display:block;
+  padding:8px 22px 24px;
+  font-size:15px;
+  line-height:1.35;
+  color:rgba(201,212,230,.88);
+  text-align:left;
+}
+
+.mode-back-btn{
+  margin-top:18px;
+  min-width:140px;
+}
+
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0, 0, 0, 0);
+  white-space:nowrap;
+  border:0;
+}
+
+.timed-mode-hud{
+  margin:8px auto 12px;
+  padding:8px 14px;
+  width:fit-content;
+  border-radius:999px;
+  align-items:center;
+  gap:12px;
+  background:linear-gradient(180deg, rgba(24,82,135,.64), rgba(6,14,28,.96));
+  border:1px solid rgba(240,200,106,.48);
+  box-shadow:
+    0 0 16px rgba(80,140,220,.24),
+    0 0 26px rgba(240,200,106,.12),
+    inset 0 0 12px rgba(0,0,0,.72);
+}
+
+.timer-label{
+  font-size:12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:#c9d4e6;
+}
+
+.timer-display{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:1px;
+  color:#f0c86a;
+  text-shadow:
+    0 0 10px rgba(240,200,106,.62),
+    0 0 18px rgba(100,170,255,.24);
+}
+
+.timer-warning{
+  animation:timerWarningPulse .75s ease-in-out infinite alternate;
+}
+
+@keyframes timerWarningPulse{
+  from{
+    transform:scale(1);
+  }
+
+  to{
+    transform:scale(1.08);
+    text-shadow:
+      0 0 14px rgba(248,113,113,.90),
+      0 0 24px rgba(240,200,106,.42);
+  }
+}
+
+@media(max-width:900px){
+  .mode-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:560px){
+  .mode-select-screen{
+    padding:14px;
+    align-items:flex-start;
+    overflow-y:auto;
+  }
+
+  .mode-grid{
+    grid-template-columns:1fr;
+  }
+
+  .mode-card{
+    min-height:250px;
+  }
+
+  .mode-card img{
+    height:145px;
+  }
+}
+	
+/* =========================================
+   14. SOUND ON/OFF
 ========================================= */
 .sound-toggle{
   position:fixed;
@@ -1859,28 +1921,6 @@ TIP:
   background:rgba(255,255,255,.08);
 }
  
-
-/* === Command Nexus upgrade controls from National Engine blueprint === */
-
-.mode-select-screen{position:fixed; inset:0; z-index:110; align-items:flex-start; justify-content:center; overflow-y:auto; padding:30px; background:linear-gradient(rgba(2,5,12,.42), rgba(2,5,12,.78)), url('start screen image.png'); background-size:cover; background-position:center;}
-.mode-select-panel{width:min(1100px,100%); padding:28px; border-radius:20px; background:rgba(6,14,28,.88); border:1px solid rgba(120,180,255,.34); box-shadow:0 0 36px rgba(0,0,0,.84),0 0 44px rgba(80,140,220,.20),inset 0 0 36px rgba(0,0,0,.64); text-align:center;}
-.mode-title{margin:0; font-size:clamp(38px,5vw,68px); letter-spacing:4px; color:#f0c86a; text-shadow:0 0 14px rgba(240,200,106,.62),0 0 28px rgba(80,140,220,.28),0 3px 8px rgba(0,0,0,.9);}
-.mode-subtitle{margin:8px auto 26px; color:#c9d4e6; font-size:20px;}
-.mode-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px;}
-.mode-card{min-height:330px; padding:0; overflow:hidden; border-radius:18px; border:1px solid rgba(120,180,255,.30); background:rgba(6,14,28,.94); color:#e6ecf5; cursor:pointer; display:flex; flex-direction:column; text-align:left; box-shadow:0 0 22px rgba(0,0,0,.68), inset 0 0 18px rgba(0,0,0,.58); transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;}
-.mode-card:hover{transform:translateY(-6px) scale(1.02); border-color:rgba(240,200,106,.78); box-shadow:0 0 28px rgba(80,140,220,.32),0 0 38px rgba(240,200,106,.16),inset 0 0 18px rgba(0,0,0,.62);}
-.mode-card img{width:100%; height:240px; object-fit:cover; border-bottom:1px solid rgba(240,200,106,.22); background:linear-gradient(180deg, rgba(24,82,135,.80), rgba(6,14,28,.98));}
-.mode-card-title{display:block; padding:18px 16px 20px; font-size:22px; font-weight:700; letter-spacing:1px; color:#f0c86a; text-align:center;}
-.mode-card-text{display:block; padding:8px 22px 24px; font-size:15px; line-height:1.35; color:rgba(201,212,230,.88); text-align:left;}
-.mode-back-btn{margin-top:18px; min-width:140px;}
-.timed-mode-hud{margin:8px auto 12px; padding:8px 14px; width:fit-content; border-radius:999px; align-items:center; gap:12px; background:linear-gradient(180deg, rgba(24,82,135,.64), rgba(6,14,28,.96)); border:1px solid rgba(240,200,106,.48); box-shadow:0 0 16px rgba(80,140,220,.24),0 0 26px rgba(240,200,106,.12),inset 0 0 12px rgba(0,0,0,.72);}
-.timer-label{font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#c9d4e6;}
-.timer-display{font-size:22px; font-weight:700; letter-spacing:1px; color:#f0c86a; text-shadow:0 0 10px rgba(240,200,106,.62),0 0 18px rgba(100,170,255,.24);}
-.timer-warning{animation:timerWarningPulse .75s ease-in-out infinite alternate;}
-@keyframes timerWarningPulse{from{transform:scale(1);} to{transform:scale(1.08); text-shadow:0 0 14px rgba(248,113,113,.90),0 0 24px rgba(240,200,106,.42);}}
-@media(max-width:900px){.mode-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:768px){.return-menu-btn{display:none!important;}}
-@media(max-width:560px){.mode-select-screen{padding:14px; align-items:flex-start; overflow-y:auto;} .mode-grid{grid-template-columns:1fr;} .mode-card{min-height:250px;} .mode-card img{height:145px;}}
 
 </style>
 </head>
