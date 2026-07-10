@@ -2682,15 +2682,15 @@ or simplify this section.
 <!-- =========================================
    2. GAME ELEMENTS (CHANGE ELEMENTS WITH NEW GAME)
 ========================================= -->
- <script src="question_bank.js?v=20260702_1"></script>
+ <script src="question_bank.js?v=20260710_1"></script>
  <script>
 
 if (!window.questionBanks || !window.microSkillRepairPools || !window.microSkillBridgePools || !window.calculationGenerators) {
     throw new Error("Command Nexus question_bank.js did not load. Check file path and version string.");
 }
 
-console.log("COMMAND NEXUS BUILD: EXTERNAL QUESTION BANK 20260702_1");
-window.COMMAND_NEXUS_BUILD = "EXTERNAL QUESTION BANK 20260702_1";
+console.log("COMMAND NEXUS BUILD: EXTERNAL QUESTION BANK 20260710_1");
+window.COMMAND_NEXUS_BUILD = "EXTERNAL QUESTION BANK 20260710_1";
 
 // =============================================
 // AUDIO SYSTEM — OPTIONAL
@@ -5068,7 +5068,7 @@ function wizardSpeak(text){
 // =============================================
 // =============================================
 // QUESTION BANKS MOVED OUT OF INDEX.HTML
-// Source file: question_bank.js?v=20260702_1
+// Source file: question_bank.js?v=20260710_1
 // Keep question pools out of View Page Source. Not real security. Just less obvious.
 
 // ANSWER SHUFFLING — DO NOT MODIFY CORE LOGIC
@@ -5131,7 +5131,7 @@ function shuffleOptions(question){
 // =============================================
 // =============================================
 // DYNAMIC CALCULATION QUESTIONS MOVED OUT OF INDEX.HTML
-// Source file: question_bank.js?v=20260702_1
+// Source file: question_bank.js?v=20260710_1
 
 // QUESTION SELECTION ENGINE — DO NOT MODIFY
 // =============================================
@@ -5488,14 +5488,39 @@ function loadQuestion() {
                 : room === 20 ? questionBanks.mediumBoss
                 : questionBanks.finalBoss;
             const bank = [...(questionBanks[diff] || fallbackBossBank || [])];
-            let chosenTag = getWeakestTag();
+            if (diff === "legendaryBoss") {
+                // Legendary boss questions are intentionally unscaffolded.
+                // Randomize the question sequence while avoiding repeats when possible.
+                let availableLegendary = bank.filter(q =>
+                    !usedQuestions.legendaryBoss.includes(q.id)
+                );
 
-            bossPool = chosenTag 
-                ? bank.filter(q => q.tag === chosenTag) 
-                : [];
+                if (availableLegendary.length < 3) {
+                    usedQuestions.legendaryBoss = [];
+                    availableLegendary = [...bank];
+                }
 
-            if (bossPool.length < 3) {
-                bossPool = bank.slice(0, 3);
+                bossPool = shuffle([...availableLegendary]).slice(0, 3);
+                bossPool.forEach(q => {
+                    if (q && !usedQuestions.legendaryBoss.includes(q.id)) {
+                        usedQuestions.legendaryBoss.push(q.id);
+                    }
+                });
+            } else {
+                // Standard bosses use three-question scaffolds. Preserve bank order.
+                const chosenTag = getWeakestTag();
+
+                bossPool = chosenTag
+                    ? bank.filter(q => q.tag === chosenTag)
+                    : [];
+
+                if (bossPool.length < 3) {
+                    bossPool = bank.slice(0, 3);
+                }
+
+                bossPool = bossPool
+                    .slice(0, 3)
+                    .sort((a, b) => a.id - b.id);
             }
         }
 
@@ -5540,11 +5565,11 @@ function loadQuestion() {
     }
     else if(room === 20){
         bossImage = "engineer.webp";
-        bossClass = "engineerGlow";
+        bossClass = "rateEngineerGlow";
     }
     else{
         bossImage = "forecaster.webp";
-        bossClass = "forecasterGlow";
+        bossClass = "shockForecasterGlow";
     }
 
         questionElement.innerHTML = `
@@ -6003,30 +6028,30 @@ if(remediationState.active){
            
          bossPool = [];
 
-        if(gameMode === "standard"){
-         bossesDefeatedThisRun++;
-         }
            
-        // Boss defeated (CHANGE ARTIFACT NAMES)
-        if(room === 10){
-        document.getElementById("vaultAtlas").classList.add("unlocked");
-        localStorage.setItem("vaultAtlas", "true");
-        saveGameState();
-        showArtifact(artifacts.atlas.img, artifacts.atlas.title, artifacts.atlas.text);
-        }
+        // Artifacts belong to Standard Campaign only.
+        // Score Attack, Legendary Mode, Timed Trial, and Exam Drill do not award them.
+        if(modeAllowsRealmProgress()){
+            if(room === 10){
+                document.getElementById("vaultAtlas").classList.add("unlocked");
+                localStorage.setItem("vaultAtlas", "true");
+                saveGameState();
+                showArtifact(artifacts.atlas.img, artifacts.atlas.title, artifacts.atlas.text);
+            }
 
-        if(room === 20){
-        document.getElementById("vaultDial").classList.add("unlocked");
-        localStorage.setItem("vaultDial", "true");
-        saveGameState();
-        showArtifact(artifacts.dial.img, artifacts.dial.title, artifacts.dial.text);
-        }
+            if(room === 20){
+                document.getElementById("vaultDial").classList.add("unlocked");
+                localStorage.setItem("vaultDial", "true");
+                saveGameState();
+                showArtifact(artifacts.dial.img, artifacts.dial.title, artifacts.dial.text);
+            }
 
-        if(room === 30){
-        document.getElementById("vaultLens").classList.add("unlocked");
-        localStorage.setItem("vaultLens", "true");
-        saveGameState();
-        showArtifact(artifacts.lens.img, artifacts.lens.title, artifacts.lens.text);
+            if(room === 30){
+                document.getElementById("vaultLens").classList.add("unlocked");
+                localStorage.setItem("vaultLens", "true");
+                saveGameState();
+                showArtifact(artifacts.lens.img, artifacts.lens.title, artifacts.lens.text);
+            }
         }
 
 // ... (Inside the Boss Victory check)
@@ -6058,7 +6083,6 @@ if(remediationState.active){
        
 if (isBossRoom) {
     sfxWrong.volume = 0.7;
-    recordBossMistakeForAchievements();
 } else {
     sfxWrong.volume = 0.5;
 }
@@ -7576,6 +7600,7 @@ function sendGameData(data) {
 </script>
 </body>
 </html>
+
 
 
 
