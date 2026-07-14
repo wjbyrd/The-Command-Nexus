@@ -1437,7 +1437,7 @@ button:active {
     padding-bottom: 2px;
     text-shadow:
         0 0 6px rgba(100,170,255,0.48),
-        0 0 12px rgba(240,200,106,0.16),
+        0 0 12px rgba(240,200,106,0.16);
 }
 
 /* Wizard Image */
@@ -2682,15 +2682,15 @@ or simplify this section.
 <!-- =========================================
    2. GAME ELEMENTS (CHANGE ELEMENTS WITH NEW GAME)
 ========================================= -->
- <script src="question_bank.js?v=20260710_1"></script>
+ <script src="question_bank.js?v=20260714_2"></script>
  <script>
 
 if (!window.questionBanks || !window.microSkillRepairPools || !window.microSkillBridgePools || !window.calculationGenerators) {
     throw new Error("Command Nexus question_bank.js did not load. Check file path and version string.");
 }
 
-console.log("COMMAND NEXUS BUILD: EXTERNAL QUESTION BANK 20260710_1");
-window.COMMAND_NEXUS_BUILD = "EXTERNAL QUESTION BANK 20260710_1";
+console.log("COMMAND NEXUS BUILD: EXTERNAL QUESTION BANK 20260714_2");
+window.COMMAND_NEXUS_BUILD = "EXTERNAL QUESTION BANK 20260714_2";
 
 // =============================================
 // AUDIO SYSTEM — OPTIONAL
@@ -3322,9 +3322,9 @@ function saveGameState(){
     };
 
     localStorage.setItem(getSaveKey(), JSON.stringify(saveData));
-    localStorage.setItem("gauntletRoom", String(room));
 
     if(modeAllowsRealmProgress()){
+        localStorage.setItem("gauntletRoom", String(room));
         localStorage.setItem(REALM_STARTED_KEY, "true");
         localStorage.setItem(REALM_STATUS_KEY, "contested");
         localStorage.setItem(REALM_ROOM_KEY, String(room));
@@ -3387,7 +3387,7 @@ function loadSavedGame(){
 function clearSavedGame(){
     localStorage.removeItem(getSaveKey());
 
-    if(modeAllowsSave()){
+    if(modeAllowsRealmProgress()){
         localStorage.removeItem("gauntletRoom");
         localStorage.removeItem("vaultAtlas");
         localStorage.removeItem("vaultDial");
@@ -4608,7 +4608,7 @@ if(!hasSavedRun){
     bossesDefeatedThisRun = 0;
     resetScoreAttackState();
 
-    if(modeAllowsSave()){
+    if(modeAllowsRealmProgress()){
         localStorage.removeItem("gauntletRoom");
         localStorage.removeItem("vaultAtlas");
         localStorage.removeItem("vaultDial");
@@ -4643,7 +4643,7 @@ if(!hasSavedRun){
     document.querySelector(".top-panel").style.display = "flex";
     document.getElementById("gameShell").style.display = "flex";
     document.getElementById("gameBox").style.display = "block";
-    document.getElementById("artifactVault").style.display = "block";
+    document.getElementById("artifactVault").style.display = modeAllowsRealmProgress() ? "block" : "none";
     document.querySelectorAll(".torch").forEach(t => t.style.display = "block");
 
    // =============================================
@@ -4652,17 +4652,10 @@ if(!hasSavedRun){
    // IMPORTANT:
    // localStorage keys must match the HTML element ids.
    // =============================================    
-    if(localStorage.getItem("vaultAtlas")){
-        document.getElementById("vaultAtlas").classList.add("unlocked");
-    }
-
-    if(localStorage.getItem("vaultDial")){
-        document.getElementById("vaultDial").classList.add("unlocked");
-    }    
-
-    if(localStorage.getItem("vaultLens")){
-        document.getElementById("vaultLens").classList.add("unlocked");
-    }
+    ["vaultAtlas", "vaultDial", "vaultLens"].forEach(id => {
+        const slot = document.getElementById(id);
+        if(slot) slot.classList.toggle("unlocked", modeAllowsRealmProgress() && localStorage.getItem(id) === "true");
+    });
   
 // Start game loop: music + timer + first question
     initializeRunForMode(gameMode);
@@ -4846,6 +4839,7 @@ function endTimedModeRun(){
     `;
 
     document.getElementById("answers").innerHTML = `
+        <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
         <button class="continue-btn" onclick="restartTimedMode()">Retry Timed Trial</button>
         <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
     `;
@@ -5068,7 +5062,7 @@ function wizardSpeak(text){
 // =============================================
 // =============================================
 // QUESTION BANKS MOVED OUT OF INDEX.HTML
-// Source file: question_bank.js?v=20260710_1
+// Source file: question_bank.js?v=20260714_2
 // Keep question pools out of View Page Source. Not real security. Just less obvious.
 
 // ANSWER SHUFFLING — DO NOT MODIFY CORE LOGIC
@@ -5131,7 +5125,7 @@ function shuffleOptions(question){
 // =============================================
 // =============================================
 // DYNAMIC CALCULATION QUESTIONS MOVED OUT OF INDEX.HTML
-// Source file: question_bank.js?v=20260710_1
+// Source file: question_bank.js?v=20260714_2
 
 // QUESTION SELECTION ENGINE — DO NOT MODIFY
 // =============================================
@@ -5422,6 +5416,20 @@ document.addEventListener("keydown", function(event){
     }
 });
 
+function renderQuestionImage(question){
+    const imageBox = document.getElementById("questionImageBox");
+    if(!imageBox) return;
+
+    imageBox.innerHTML = "";
+    closeGraphLightbox();
+    imageBox.style.display = "none";
+
+    if(question?.image){
+        imageBox.innerHTML = `<img src="${question.image}" alt="Question graph" title="Click to enlarge"><div class="graph-zoom-note">Click graph to enlarge</div>`;
+        imageBox.style.display = "block";
+    }
+}
+
 // MAIN GAME LOOP — DO NOT MODIFY
 // =============================================
 // Controls:
@@ -5440,13 +5448,10 @@ function loadQuestion() {
     const msgElement = document.getElementById("message");
     const gameBox = document.getElementById("gameBox");
     const bossMsg = document.getElementById("bossMessage");
-	const imageBox = document.getElementById("questionImageBox");
+
 
     document.getElementById("artifactDrop").style.display = "none";
-
-	imageBox.innerHTML = "";
-	closeGraphLightbox();
-	imageBox.style.display = "none";
+    renderQuestionImage(null);
 
     // 1. Determine Difficulty and Boss Status
     let diff = getDifficultyForMode();
@@ -5527,10 +5532,7 @@ function loadQuestion() {
         // 2. Select the specific question based on boss health
         currentQuestion = shuffleOptions(bossPool[3 - bossHealth] || bossPool[0] || (questionBanks.finalBoss || questionBanks.hard || questionBanks.medium || questionBanks.easy || [])[0]);
 
-		if(currentQuestion.image){
-   		imageBox.innerHTML = `<img src="${currentQuestion.image}" alt="Question graph" title="Click to enlarge"><div class="graph-zoom-note">Click graph to enlarge</div>`;
-   		imageBox.style.display = "block";
-		}
+        renderQuestionImage(currentQuestion);
 
         // 3. Boss Identity UI (Logic moved ABOVE the return)
         let bTitle = room === 10 ? "THE DEMAND CARTOGRAPHER"
@@ -5578,6 +5580,8 @@ function loadQuestion() {
             <div class="boss-q" style="--bossColor:${bColor}">
                 ${currentQuestion.q}
             </div>`;
+
+        document.getElementById("formulaHint").innerText = currentQuestion.hint ? "💡 Hint: " + currentQuestion.hint : "";
 
         // 4. THE CORRECT PLACEMENT OF RETURN
         // We draw the UI first, THEN we exit the function.
@@ -5642,10 +5646,7 @@ else{
     );
 }
 		
-if(currentQuestion.image){
-    imageBox.innerHTML = `<img src="${currentQuestion.image}" alt="Question graph" title="Click to enlarge"><div class="graph-zoom-note">Click graph to enlarge</div>`;
-    imageBox.style.display = "block";
-}
+renderQuestionImage(currentQuestion);
 
 // =============================
 // --- WIZARD LOGIC ---
@@ -5788,8 +5789,6 @@ async function answer(choice) {
     conceptMemory[tag] *= 0.95;
     }
    
-    totalAttempts++;
-   
     const isBossRoom = isBossRoomForMode(room);
     const msgElement = document.getElementById("message");
     const wizard = document.getElementById("wizardImage");
@@ -5855,6 +5854,7 @@ if(rapidGuess.triggered && !rapidGuessLocked){
     return;
 }
 
+totalAttempts++;
 recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
 
     // =============================================
@@ -5950,6 +5950,8 @@ if(remediationState.active){
             msgElement.innerHTML =
                 `<span class='fade-out-text'>${getRecoveryLine("bridge")}</span>`;
 
+            renderQuestionImage(currentQuestion);
+            questionStartTime = Date.now();
             displayQuestion();
             return;
         }
@@ -5975,6 +5977,8 @@ if(remediationState.active){
             msgElement.innerHTML =
                 `<span class='fade-out-text'>${getRecoveryLine("retest")}</span>`;
 
+            renderQuestionImage(currentQuestion);
+            questionStartTime = Date.now();
             displayQuestion();
             return;
         }
@@ -6067,7 +6071,7 @@ if(remediationState.active){
    msgElement.innerHTML = "";
    room++;
    if(gameMode === "timed"){
-       timedHighestRoom = Math.max(timedHighestRoom, room);
+       timedHighestRoom = Math.max(timedHighestRoom, Math.min(room, 30));
    }
    saveGameState();
    if((gameMode === "exam" || gameMode === "timed") && room > 30){
@@ -6129,6 +6133,8 @@ if(remediationState.active){
         msgElement.innerHTML =
             `<span class='fade-out-text'>${getRecoveryLine("miss")}</span>`;
 
+        renderQuestionImage(currentQuestion);
+        questionStartTime = Date.now();
         displayQuestion();
         return;
     }
@@ -6163,6 +6169,8 @@ if (!remediationState.active && currentQuestion.tag && shouldTriggerDetour(curre
         msgElement.innerHTML =
             `<span class='fade-out-text'>${remediationMessage}</span>`;
 
+        renderQuestionImage(currentQuestion);
+        questionStartTime = Date.now();
         displayQuestion();
         return;
     }
@@ -6595,7 +6603,7 @@ function handleScoreAttackVictory(){
     });
 
     let scoreLine = "Respectable. The Nexus noticed.";
-    if(scoreAttackScore >= 9250){
+    if(scoreAttackScore >= 11590){
         scoreLine = "Maximum score. Clean run. No wasted motion. The Nexus can shut up now.";
     } else if(scoreAttackScore >= 8000){
         scoreLine = "Elite scoring run. Fast, accurate, and mean.";
@@ -6707,21 +6715,37 @@ function handleLegendaryVictory(){
 }
 
 function handlePracticeModeComplete(){
+    const completedMode = gameMode;
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
         : 0;
+    const totalTimeMs = startTime ? (Date.now() - startTime) : 0;
 
-if(gameMode === "exam"){
-    markExamDrillCompleted();
-}
+    if(completedMode === "exam"){
+        markExamDrillCompleted();
+    }
+
+    if(completedMode === "timed"){
+        const reachedRoom = Math.min(30, Math.max(timedHighestRoom || 1, room || 1));
+        timedHighestRoom = reachedRoom;
+
+        localStorage.setItem("commandNexusTimedLastRoom", String(reachedRoom));
+        localStorage.setItem("commandNexusTimedLastHighestRoom", String(reachedRoom));
+        localStorage.setItem("commandNexusTimedLastAccuracy", String(accuracy));
+        localStorage.setItem("commandNexusTimedLastAttempts", String(totalAttempts));
+        localStorage.setItem("commandNexusTimedLastStreak", String(maxStreak));
+        localStorage.setItem("commandNexusTimedLastSetbacks", String(timedSetbacks));
+
+        recordTimedTrialAchievementStats(accuracy, reachedRoom);
+    }
 
     sendGameData({
         runID: runID,
         game: "The Command Nexus",
-        event: gameMode === "exam" ? "exam_complete" : "practice_complete",
+        event: completedMode === "exam" ? "exam_complete" : "timed_complete",
         user: username,
         email: studentEmail,
-        room: room,
+        room: Math.min(room, 30),
         questionId: 0,
         correct: 1,
         tag: "",
@@ -6730,8 +6754,9 @@ if(gameMode === "exam"){
         responseTime: 0,
         attempt: totalAttempts,
         streak: streak,
-        elapsedTime: startTime ? (Date.now() - startTime) : 0,
-        adaptiveMode: gameMode === "exam" ? "exam_complete" : "practice_complete",
+        elapsedTime: totalTimeMs,
+        adaptiveMode: completedMode === "exam" ? "exam_complete" : "timed_complete",
+        totalTime: totalTimeMs,
         accuracy: accuracy / 100,
         maxStreak: maxStreak,
         totalAttempts: totalAttempts
@@ -6741,26 +6766,29 @@ if(gameMode === "exam"){
     document.getElementById("bossMessage").innerText = "";
     document.getElementById("formulaHint").innerText = "";
     document.getElementById("artifactDrop").style.display = "none";
-    closeGraphLightbox();
-    document.getElementById("questionImageBox").style.display = "none";
+    renderQuestionImage(null);
 
     document.getElementById("question").innerHTML = `
-        <span class="boss-title">${gameMode === "exam" ? "EXAM DRILL COMPLETE" : "PRACTICE RUN COMPLETE"}</span>
+        <span class="boss-title">${completedMode === "exam" ? "EXAM DRILL COMPLETE" : "TIMED TRIAL COMPLETE"}</span>
         <div class="boss-q">
+            ${completedMode === "timed" ? `Rooms Cleared: ${timedHighestRoom}/30<br>` : ""}
             Accuracy: ${accuracy}%<br>
             Total Attempts: ${totalAttempts}<br>
-            Best Streak: ${maxStreak}<br><br>
+            Best Streak: ${maxStreak}<br>
+            ${completedMode === "timed" ? `Setbacks Taken: ${timedSetbacks}<br>` : ""}<br>
             No artifacts were awarded. No Nexus campaign progress was changed.
         </div>
     `;
 
     document.getElementById("answers").innerHTML = `
         <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
-        <button class="continue-btn" onclick="startSelectedMode('${gameMode === "exam" ? "exam" : "timed"}')">Run Again</button>
+        <button class="continue-btn" onclick="startSelectedMode('${completedMode === "exam" ? "exam" : "timed"}')">Run Again</button>
         <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
     `;
 
-    document.getElementById("message").innerText = "Practice record saved.";
+    document.getElementById("message").innerText = completedMode === "exam"
+        ? "Exam Drill record saved."
+        : "Timed Trial record saved.";
 }
 
 function handleVictory() {
@@ -7572,7 +7600,10 @@ function sendGameData(data) {
     accuracy: Number(data.accuracy ?? 0),
     maxStreak: Number(data.maxStreak ?? 0),
     totalAttempts: Number(data.totalAttempts ?? data.attempts ?? 0),
-    verificationCode: data.verificationCode || data.code || ""
+    verificationCode: data.verificationCode || data.code || "",
+    gameMode: data.gameMode || gameMode || "",
+    score: Number(data.score ?? 0),
+    bestScore: Number(data.bestScore ?? 0)
   };
 
   fetch("https://default8de80de86d8a47cbb5bc7fb9b5bf1c.64.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/239b526e4b9f4c1997a009d53a32267a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=qQhDuP6P3K8mxdCKyBaMw6S0IPd8rBn8BUAEi_CtlxQ", {
