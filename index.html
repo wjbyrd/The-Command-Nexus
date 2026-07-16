@@ -2508,25 +2508,25 @@ Respect structure strictly.
 
     <div class="mode-grid">
       <button class="mode-card" onclick="startSelectedMode('standard')" aria-label="Standard Campaign. Full 30-room run with bosses, artifacts, setbacks, save and resume status, and Nexus progress.">
-        <img src="mode_standard.webp" alt="" aria-hidden="true">
+        <img src="../mode_standard.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Standard Campaign</span>
         <span class="mode-card-text">Full 30-room run with bosses, artifacts, setbacks, and Nexus progress.</span>
       </button>
 
       <button class="mode-card" onclick="startSelectedMode('timed')" aria-label="Timed Trial. Ten minute run with visible countdown, normal setbacks, rapid guessing penalties, and results saved separately.">
-        <img src="mode_timed.webp" alt="" aria-hidden="true">
+        <img src="../mode_timed.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Timed Trial</span>
         <span class="mode-card-text">Ten minutes. Correct answers advance. Misses push you back.</span>
       </button>
 
       <button class="mode-card" onclick="startSelectedMode('exam')" aria-label="Exam Drill. No bosses, no artifacts, no Nexus progress. Just adaptive practice.">
-        <img src="mode_exam.webp" alt="" aria-hidden="true">
+        <img src="../mode_exam.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Exam Drill</span>
         <span class="mode-card-text">No bosses. No artifacts. No Nexus progress. Just adaptive practice.</span>
       </button>
 
       <button class="mode-card" onclick="startSelectedMode('legendary')" aria-label="Legendary Mode. Full 30-room campaign using the hardest available Command Nexus questions.">
-        <img src="mode_legendary.webp" alt="" aria-hidden="true">
+        <img src="../mode_legendary.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Legendary Mode</span>
         <span class="mode-card-text">Full campaign. Hardest available questions. Bosses still hit. No mercy.</span>
       </button>
@@ -2535,7 +2535,7 @@ Respect structure strictly.
            New arcade-style scoring mode. Uses the normal 30-room path and bosses,
            but does NOT count as Standard Campaign Nexus progress. -->
       <button class="mode-card" onclick="startSelectedMode('score')" aria-label="Score Attack. Build points through correct answers, streaks, and speed. Misses subtract points and rapid guessing is punished.">
-        <img src="scoreattack.webp" alt="" aria-hidden="true">
+        <img src="../scoreattack.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Score Attack</span>
         <span class="mode-card-text">Rack up points with correct answers, streaks, and speed. Misses cost you.</span>
       </button>
@@ -2606,7 +2606,7 @@ or simplify this section.
         <div id="gameShell">
             <div id="wizardBox">
                 <div id="wizardName">The Custodian</div>
-                <img src="custodian.webp" id="wizardImage">
+                <img src="../custodian.webp" id="wizardImage">
             </div>
 
             <!-- GAME -->
@@ -6269,7 +6269,7 @@ if(remediationState.active){
 }
 
 // --- STAGED REMEDIATION TRIGGER ---
-if (!remediationState.active && currentQuestion.tag && shouldTriggerDetour(currentQuestion)) {
+if (gameMode !== "legendary" && !remediationState.active && currentQuestion.tag && shouldTriggerDetour(currentQuestion)) {
     remediationState = planRemediation(currentQuestion, responseTime) || remediationState;
     detourActive = true;
     detourReturnRoom = room;
@@ -7757,7 +7757,6 @@ function sendGameData(data) {
 </script>
 </body>
 </html>
-
 
 
 
