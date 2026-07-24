@@ -207,7 +207,6 @@ body::after{
 }
 
 /* PLACEHOLDER */
-#emailInput::placeholder,
 #username::placeholder{
     color: rgba(180,200,230,0.55);
     font-style: italic;
@@ -2490,7 +2489,6 @@ Respect structure strictly.
 <div id="startScreen">
   <div class="start-content">
     <h1 class="title">THE COMMAND NEXUS</h1>
-    <input id="emailInput" type="email" placeholder="Enter your school email" class="name-input">
     <button class="start-btn" onclick="showModeSelect()">ENTER THE NEXUS</button>
 
     <button id="continueRunBtn"
@@ -2683,6 +2681,7 @@ or simplify this section.
 <!-- =========================================
    2. GAME ELEMENTS (CHANGE ELEMENTS WITH NEW GAME)
 ========================================= -->
+<script src="instructional_resources.js?v=20260724_1" charset="UTF-8"></script>
 <script src="question_bank.js?v=20260717_1" charset="UTF-8"></script>
  <script>
 
@@ -2889,13 +2888,14 @@ let bossCheckpoint = 1;
 let correctAnswers = 0; 
 let maxStreak = 0; 
 let username = "";
-let studentEmail = "";
 let runID = "";
 let questionStartTime = 0;
 let streak = 0; 
-let startTime; // Will be set in startGame()
-let room = 1;
+let startTime;
+let finalElapsedTimeMs=null;function getElapsedTimeMs(){return Number.isFinite(finalElapsedTimeMs)?finalElapsedTimeMs:(startTime?Date.now()-startTime:0);}function freezeCompletionTime(fallbackMs=0){if(!Number.isFinite(finalElapsedTimeMs))finalElapsedTimeMs=startTime?Date.now()-startTime:fallbackMs;return finalElapsedTimeMs;} // Will be set in startGame()
+let room = localStorage.getItem('commandNexusRoom') ? parseInt(localStorage.getItem('commandNexusRoom')) : 1;
 let currentQuestion = null;
+let answerSubmissionPending=false;
 let detourActive = false;
 let detourReturnRoom = null;
 let remediationState = {
@@ -3349,8 +3349,7 @@ function saveGameState(){
         maxStreak,
         streak,
         username,
-        studentEmail,
-        runID,
+runID,
         gameMode,
         conceptMemory,
         masteryState,
@@ -3413,8 +3412,7 @@ function loadSavedGame(expectedMode = gameMode){
         streak = Number(saveData.streak || 0);
 
         username = saveData.username || username || "";
-        studentEmail = saveData.studentEmail || studentEmail || "";
-        runID = saveData.runID || runID || "";
+runID = saveData.runID || runID || "";
         gameMode = normalizedMode;
 
         conceptMemory = saveData.conceptMemory || {};
@@ -3455,7 +3453,7 @@ function clearSavedGame(){
     }
 }
 
-function generatePseudonymFromEmail(email) {
+function generatePseudonymFromSeed(seed) {
     const prefixes = [
         "Nominal", "Real", "Indexed", "Fiscal", "Monetary", "Aggregate",
         "Capital", "Labor", "Inflation", "Output", "Reserve", "Cyclical",
@@ -3469,10 +3467,10 @@ function generatePseudonymFromEmail(email) {
     ];
 
     let hash = 0;
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanSeed = String(seed || "").trim().toLowerCase();
 
-    for (let i = 0; i < cleanEmail.length; i++) {
-        hash = ((hash << 5) - hash) + cleanEmail.charCodeAt(i);
+    for (let i = 0; i < cleanSeed.length; i++) {
+        hash = ((hash << 5) - hash) + cleanSeed.charCodeAt(i);
         hash |= 0;
     }
 
@@ -4502,52 +4500,9 @@ function getCommandNexusBossLine({ isCorrect, tag, type, objective, streak, boss
 // Removing this will NOT break the game,
 // but will remove convenience for returning users.
 // =============================================
-const savedEmail = localStorage.getItem("gauntletEmail");
-const emailInput = document.getElementById("emailInput");
-
-if (savedEmail && emailInput) {
-    emailInput.value = savedEmail;
-}
-
-function hasSavedGame(mode = "standard"){
-    return !!localStorage.getItem(`${SAVE_KEY}_${mode}`);
-}
-
-function showContinueButtonIfSaved(){
-    const btn = document.getElementById("continueRunBtn");
-    if(!btn) return;
-
-    btn.style.display = hasSavedGame("standard") ? "block" : "none";
-}
-
-function validateAndStoreEmailForModeSelect(){
-    let inputEmail = document.getElementById("emailInput").value.trim().toLowerCase();
-
-    if (!inputEmail) {
-        alert("An email is required to enter the Nexus.");
-        return false;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailPattern.test(inputEmail)) {
-        alert("Enter a valid email address.");
-        return false;
-    }
-
-    studentEmail = inputEmail;
-    username = generatePseudonymFromEmail(studentEmail);
-
-    localStorage.setItem("gauntletEmail", studentEmail);
-    localStorage.setItem("gauntletUser", username);
-
-    return true;
-}
-
+function hasSavedGame(mode='standard'){return !!localStorage.getItem(SAVE_KEY+'_'+mode);}
 function showModeSelect(){
-    if(!validateAndStoreEmailForModeSelect()) return;
-
-    setGameControlsVisible(false);
+setGameControlsVisible(false);
 
     document.getElementById("startScreen").style.display = "none";
 
@@ -4739,24 +4694,6 @@ function startGame(shouldResume = false, requestedMode = null) {
     const launchMode = requestedMode || gameMode || "standard";
     gameMode = launchMode;
     resetGameSurfaceForNewRun(!shouldResume);
-
-    let inputEmail = document.getElementById("emailInput").value.trim().toLowerCase();
-
-    if (!inputEmail) {
-        alert("An email is required to enter the Nexus.");
-        return;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailPattern.test(inputEmail)) {
-        alert("Enter a valid email address.");
-        return;
-    }
-
-    studentEmail = inputEmail;
-    username = generatePseudonymFromEmail(studentEmail);
-
     const hasSavedRun = shouldResume ? loadSavedGame(launchMode) : false;
     if(!hasSavedRun){
         gameMode = launchMode;
@@ -4765,10 +4702,10 @@ function startGame(shouldResume = false, requestedMode = null) {
 
     if(!hasSavedRun){
         bossCheckpoint = 1;
-        runID = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        runID = Date.now().toString() + '-' + Math.random().toString(36).slice(2, 8);
+        username = generatePseudonymFromSeed(runID);
     }
-
-    localStorage.setItem("gauntletEmail", studentEmail);
+    if(!username) username = generatePseudonymFromSeed(runID || String(Date.now()));
     localStorage.setItem("gauntletUser", username);
     localStorage.setItem("gauntletRunID", runID);
 
@@ -4783,7 +4720,6 @@ function startGame(shouldResume = false, requestedMode = null) {
         game: "The Command Nexus",
         event: hasSavedRun ? "resume" : "start",
         user: username,
-        email: studentEmail
     });
 
 // =============================================
@@ -4865,7 +4801,7 @@ if(!hasSavedRun){
 // Start game loop: music + timer + first question
     initializeRunForMode(gameMode);
     safePlay(bgMusic);
-    startTime = Date.now(); 
+    finalElapsedTimeMs=null;startTime=Date.now(); 
     loadQuestion();
 }
 
@@ -5010,7 +4946,6 @@ function endTimedModeRun(){
         game: "The Command Nexus",
         event: "timed_complete",
         user: username,
-        email: studentEmail,
         room: room,
         questionId: 0,
         correct: 1,
@@ -5020,7 +4955,7 @@ function endTimedModeRun(){
         responseTime: 0,
         attempt: totalAttempts,
         streak: streak,
-        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        elapsedTime: startTime ? (getElapsedTimeMs()) : 0,
         adaptiveMode: "timed_complete",
         totalTime: timedModeDurationMs,
         accuracy: accuracy / 100,
@@ -5047,7 +4982,8 @@ function endTimedModeRun(){
     `;
 
     document.getElementById("answers").innerHTML = `
-        <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
+        <button class="continue-btn" onclick="downloadTelemetryCsv()">Download Game Data</button>
+<button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
         <button class="continue-btn" onclick="restartTimedMode()">Retry Timed Trial</button>
         <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
     `;
@@ -5119,18 +5055,6 @@ function getDifficultyForMode(){
 // Allows pressing Enter to start the game
 // Improves usability, does not affect logic
 // =============================================
-document.getElementById("emailInput").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-
-        if(hasSavedGame("standard")){
-            continueSavedRun();
-        } else {
-            showModeSelect();
-        }
-    }
-});
-
 // =============================================
 // AREA NAMING SYSTEM — SAFE TO CUSTOMIZE (WITH RULES)
 // =============================================
@@ -5351,33 +5275,40 @@ function generateUniqueCalculationQuestion(generator, maxAttempts = 12){
 }
 
 function shuffleOptions(question){
-    question = normalizeQuestionChoices(question);
-    let q = {
-        id: question.id,
-        q: question.q,
-        options: [...question.options],
-        a: question.a,
-        feedback: question.feedback,
-        hint: question.hint,
-        tag: question.tag,
-        type: question.type,
-        objective: question.objective,
-        image: question.image,
-        primarySkill: question.primarySkill,
-        repairSkill: question.repairSkill,
-        commonError: question.commonError
+    const q = {
+        ...question,
+        options: [...(question.options || [])],
+        secondarySkills: [...(question.secondarySkills || [])]
     };
 
-    let correct = q.options[q.a];
+    const correctText = Number.isInteger(question.a)
+        ? question.options[question.a]
+        : null;
 
     for(let i = q.options.length - 1; i > 0; i--){
-        let j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(Math.random() * (i + 1));
         [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
     }
 
-    q.a = q.options.indexOf(correct);
+    if(correctText !== null){
+        q.a = q.options.indexOf(correctText);
+    } else {
+        delete q.a;
+    }
 
     return q;
+}
+
+async function isQuestionAnswerCorrect(question, selectedIndex){
+    if(!question || !Array.isArray(question.options)) return false;
+    const selectedOptionText = question.options[selectedIndex] ?? "";
+    if(typeof question.aHash === "string"){
+        if(typeof isPublishedAnswerCorrect !== "function"){
+            throw new Error("Published answer verification helper is missing.");
+        }
+        return isPublishedAnswerCorrect(question, selectedOptionText);
+    }
+    return Number.isInteger(question.a) && selectedIndex === question.a;
 }
 
 // =============================================
@@ -5974,7 +5905,8 @@ renderQuestionImage(currentQuestion);
 //
 // This is the bridge between UI and engine.
 // =============================================     
-function displayQuestion() {
+function displayQuestion(){
+answerSubmissionPending=false;
     const optionsElement = document.getElementById("answers");
     optionsElement.innerHTML = "";
 
@@ -6052,6 +5984,8 @@ function checkRapidGuessing(isCorrect, responseTime){
 // Check for artifact names and CHANGE
      
 async function answer(choice) {
+if(answerSubmissionPending||rapidGuessLocked)return;answerSubmissionPending=true;setAnswerButtonsDisabled(true);const responseTime=Date.now()-questionStartTime;let isCorrect=false;try{isCorrect=await isQuestionAnswerCorrect(currentQuestion,choice);}catch(error){console.error(error);answerSubmissionPending=false;setAnswerButtonsDisabled(false);showGameModal({title:'Answer Check Failed',text:'The Command Nexus could not verify this answer. Reload the game files and try again.',confirmText:'Continue'});return;}totalAttempts++;
+
     const answerSessionId = runSessionId;
 
     // --- GLOBAL MEMORY DECAY ---
@@ -6062,9 +5996,6 @@ async function answer(choice) {
     const isBossRoom = isBossRoomForMode(room);
     const msgElement = document.getElementById("message");
     const wizard = document.getElementById("wizardImage");
-const isCorrect = (choice === currentQuestion.a);
-const responseTime = Date.now() - questionStartTime;
-
 // =============================================
 // RAPID GUESSING LOCKOUT
 // Catches button-mashing before it pollutes mastery,
@@ -6087,11 +6018,11 @@ if(rapidGuess.triggered && !rapidGuessLocked){
     sendGameData({
         runID: runID,
         game: "The Command Nexus",
-        event: "rapid_guessing",
+        event: "question",
         user: username || "anonymous",
-        email: studentEmail || "",
         room: room,
         questionId: currentQuestion.id || 0,
+selectedIndex: choice,
         correct: isCorrect ? 1 : 0,
         tag: currentQuestion.tag || "none",
         type: currentQuestion.type || "none",
@@ -6099,7 +6030,7 @@ if(rapidGuess.triggered && !rapidGuessLocked){
         responseTime: responseTime,
         attempt: totalAttempts ?? 0,
         streak: streak ?? 0,
-        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        elapsedTime: startTime ? (getElapsedTimeMs()) : 0,
         adaptiveMode: adaptiveMode
     });
 
@@ -6124,7 +6055,6 @@ if(rapidGuess.triggered && !rapidGuessLocked){
     return;
 }
 
-totalAttempts++;
 recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
 
     // =============================================
@@ -6148,9 +6078,9 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
 		game: "The Command Nexus",
         event: "question",
         user: username || "anonymous",
-		email: studentEmail || "",
         room: room,
         questionId: currentQuestion.id || 0,
+selectedIndex: choice,
         correct: isCorrect ? 1 : 0,
         tag: currentQuestion.tag || "none",
         type: currentQuestion.type || "none",
@@ -6158,7 +6088,7 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
         responseTime: responseTime,
 	     attempt: totalAttempts ?? 0,
 		  streak: streak ?? 0,
-		  elapsedTime: startTime ? (Date.now() - startTime) : 0,
+		  elapsedTime: startTime ? (getElapsedTimeMs()) : 0,
           adaptiveMode: adaptiveMode,
           score: scoreAttackScore,
           bestScore: scoreAttackBestScore
@@ -6297,7 +6227,6 @@ if(remediationState.active){
 			game: "The Command Nexus",
             event: "boss_defeated",
             user: username,
-			email: studentEmail,
             room: room
          });
            
@@ -6839,7 +6768,7 @@ function generateCode(name, acc, streak, total){
 function handleScoreAttackVictory(){
     stopTimedModeClock();
 
-    const totalTimeMs = startTime ? (Date.now() - startTime) : 0;
+    const totalTimeMs = startTime ? (getElapsedTimeMs()) : 0;
     const timeString = formatTime(totalTimeMs);
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
@@ -6852,7 +6781,6 @@ function handleScoreAttackVictory(){
         game: "The Command Nexus",
         event: "score_complete",
         user: username,
-        email: studentEmail,
         room: room,
         questionId: 0,
         correct: 1,
@@ -6902,7 +6830,8 @@ function handleScoreAttackVictory(){
     `;
 
     document.getElementById("answers").innerHTML = `
-        <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
+        <button class="continue-btn" onclick="downloadTelemetryCsv()">Download Game Data</button>
+<button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
         <button class="continue-btn" onclick="restartScoreAttackMode()">Retry Score Attack</button>
         <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
     `;
@@ -6930,7 +6859,7 @@ function handleLegendaryVictory(){
         sfxVictory.play();
     }
 
-    const totalTimeMs = Date.now() - startTime;
+    const totalTimeMs=freezeCompletionTime();
     const accuracy = totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0;
     const timeString = formatTime(totalTimeMs);
     const verificationCode = generateCode(username, accuracy, maxStreak, totalTimeMs);
@@ -6940,7 +6869,6 @@ function handleLegendaryVictory(){
         game: "The Command Nexus",
         event: "legendary_complete",
         user: username,
-        email: studentEmail,
         room: room,
         questionId: 0,
         correct: 1,
@@ -6950,7 +6878,7 @@ function handleLegendaryVictory(){
         responseTime: 0,
         attempt: totalAttempts,
         streak: streak,
-        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        elapsedTime: startTime ? (getElapsedTimeMs()) : 0,
         adaptiveMode: "legendary_complete",
         totalTime: totalTimeMs,
         accuracy: accuracy / 100,
@@ -6977,7 +6905,8 @@ function handleLegendaryVictory(){
     `;
 
     document.getElementById("answers").innerHTML = `
-        <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
+        <button class="continue-btn" onclick="downloadTelemetryCsv()">Download Game Data</button>
+<button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
         <button class="continue-btn" onclick="copyResults()">Copy Results</button>
         <button class="continue-btn" onclick="location.reload()">Return to Start</button>
     `;
@@ -6990,7 +6919,7 @@ function handlePracticeModeComplete(){
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
         : 0;
-    const totalTimeMs = startTime ? (Date.now() - startTime) : 0;
+    const totalTimeMs = startTime ? (getElapsedTimeMs()) : 0;
 
     if(completedMode === "exam"){
         markExamDrillCompleted();
@@ -7015,7 +6944,6 @@ function handlePracticeModeComplete(){
         game: "The Command Nexus",
         event: completedMode === "exam" ? "exam_complete" : "timed_complete",
         user: username,
-        email: studentEmail,
         room: Math.min(room, 30),
         questionId: 0,
         correct: 1,
@@ -7052,7 +6980,8 @@ function handlePracticeModeComplete(){
     `;
 
     document.getElementById("answers").innerHTML = `
-        <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
+        <button class="continue-btn" onclick="downloadTelemetryCsv()">Download Game Data</button>
+<button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
         <button class="continue-btn" onclick="startSelectedMode('${completedMode === "exam" ? "exam" : "timed"}')">Run Again</button>
         <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
     `;
@@ -7096,7 +7025,7 @@ function handleVictory() {
         sfxVictory.play();
     }
     
-    const totalTimeMs = Date.now() - startTime;
+    const totalTimeMs=freezeCompletionTime();
     const timeString = formatTime(totalTimeMs);
     const accuracy = Math.round((correctAnswers / totalAttempts) * 100);
     const verificationCode = generateCode(username, accuracy, maxStreak, totalTimeMs);
@@ -7106,7 +7035,6 @@ sendGameData({
 	game: "The Command Nexus",
     event: "complete",
     user: username,
-	email: studentEmail,
     room: room,
     questionId: 0,
     correct: 1,
@@ -7116,7 +7044,7 @@ sendGameData({
     responseTime: 0,
     attempt: totalAttempts,
     streak: streak,
-    elapsedTime: startTime ? (Date.now() - startTime) : 0,
+    elapsedTime: startTime ? (getElapsedTimeMs()) : 0,
     adaptiveMode: "complete",
     totalTime: totalTimeMs,
     accuracy: accuracy / 100,
@@ -7462,7 +7390,7 @@ function getMasteryReportModeName(){
 }
 
 function getMasteryReportData(){
-    const totalTimeMs = startTime ? (Date.now() - startTime) : 0;
+    const totalTimeMs = startTime ? (getElapsedTimeMs()) : 0;
     const accuracy = totalAttempts > 0 ? correctAnswers / totalAttempts : 0;
     const tagEntries = getEntriesFromBuckets(masteryState.byTag || {}, "tag");
     const objectiveEntries = getEntriesFromBuckets(masteryState.byObjective || {}, "objective");
@@ -7548,8 +7476,87 @@ function getMasteryReportData(){
         noMajorWeakness,
         behavior,
         verdict,
-        nextSteps
+        nextSteps,
+        recommendations: getRecommendedReviewResources({ weakestObjectives })
     };
+}
+
+
+let latestReviewMaterialsHTML = "";
+
+function getRecommendedReviewResources(report){
+    const catalog = window.INSTRUCTIONAL_RESOURCES;
+    if(!catalog || !Array.isArray(catalog.resources)) return [];
+
+    const resourceById = new Map(catalog.resources.map(resource => [resource.id, resource]));
+    const selectedIds = [];
+    const addIds = ids => (ids || []).forEach(id => {
+        if(resourceById.has(id) && !selectedIds.includes(id)) selectedIds.push(id);
+    });
+    const objectiveIds = (report && report.weakestObjectives || [])
+        .map(entry => String(entry && entry.key || "").match(/LO\d+\.\d+/i))
+        .filter(Boolean)
+        .map(match => match[0].toUpperCase());
+
+    objectiveIds.forEach(objectiveId => {
+        const mapping = catalog.objectiveMappings && catalog.objectiveMappings[objectiveId];
+        if(mapping){
+            addIds(mapping.resourceIds);
+            addIds(mapping.fallbackResourceIds);
+        }
+    });
+
+    if(!selectedIds.length){
+        Object.values(catalog.fallbackResourceIds || {}).forEach(addIds);
+    }
+
+    return selectedIds
+        .map(id => resourceById.get(id))
+        .filter(Boolean)
+        .slice(0, Number(catalog.settings && catalog.settings.maximumRecommendations) || 3);
+}
+
+function renderRecommendedReview(report){
+    const resources = report.recommendations || getRecommendedReviewResources(report);
+    if(!resources.length){
+        return '<div class="mastery-section"><h3>Recommended Review</h3><p class="mastery-empty">No student-facing review materials are mapped for this run yet.</p></div>';
+    }
+
+    return '<div class="mastery-section" id="recommendedReviewSection">'
+        + '<h3>Recommended Review</h3>'
+        + '<p class="mastery-row-meta">These materials are matched to the learning-objective signals above.</p>'
+        + resources.map(resource => '<article class="mastery-row" style="display:block;margin:10px 0;padding:14px;">'
+            + '<div class="mastery-row-main"><span class="mastery-row-name">' + escapeHTML(resource.title) + '</span>'
+            + '<span class="mastery-row-score" style="font-size:.78em">' + escapeHTML(resource.typeLabel || resource.type) + '</span></div>'
+            + '<span class="mastery-row-meta">' + escapeHTML(resource.description) + '</span><br>'
+            + '<a class="continue-btn" style="display:inline-block;margin-top:10px;text-decoration:none;" href="' + escapeHTML(resource.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHTML(resource.actionLabel || 'Open Resource') + '</a>'
+            + '</article>').join('')
+        + '<button class="continue-btn secondary-modal-btn" onclick="showReviewMaterialsScreen()">Review Materials</button>'
+        + '</div>';
+}
+
+function showReviewMaterialsScreen(){
+    const gameBox = document.getElementById("gameBox");
+    if(!gameBox) return;
+    latestReviewMaterialsHTML = gameBox.innerHTML;
+    const report = getMasteryReportData();
+    const resources = report.recommendations || getRecommendedReviewResources(report);
+    const cards = resources.length ? resources.map(resource => '<article class="mastery-section" style="margin:12px 0;">'
+        + '<h3>' + escapeHTML(resource.title) + '</h3>'
+        + '<p class="mastery-row-meta">' + escapeHTML(resource.typeLabel || resource.type) + ' · ' + escapeHTML(resource.description) + '</p>'
+        + '<a class="continue-btn" style="display:inline-block;text-decoration:none;" href="' + escapeHTML(resource.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHTML(resource.actionLabel || 'Open Resource') + '</a>'
+        + '</article>').join('') : '<p class="mastery-empty">No mapped student-facing materials are available for this report.</p>';
+    gameBox.innerHTML = '<div id="reviewMaterialsScreen" class="mastery-report-screen">'
+        + '<h1 class="mastery-report-title">REVIEW MATERIALS</h1>'
+        + '<p class="mastery-report-subtitle">Focused materials selected from this game\'s local course catalog.</p>'
+        + cards
+        + '<div class="mastery-actions"><button class="continue-btn secondary-modal-btn" onclick="restoreMasteryReportFromMaterials()">Back to Mastery Report</button></div>'
+        + '</div>';
+}
+
+function restoreMasteryReportFromMaterials(){
+    const gameBox = document.getElementById("gameBox");
+    if(gameBox && latestReviewMaterialsHTML) gameBox.innerHTML = latestReviewMaterialsHTML;
 }
 
 function showMasteryReportScreen(){
@@ -7643,8 +7650,11 @@ function showMasteryReportScreen(){
                 ${report.nextSteps.map(step => `<div class="mastery-row"><span class="mastery-row-name">${escapeHTML(step)}</span></div>`).join("")}
             </div>
 
+            ${renderRecommendedReview(report)}
+
             <div class="mastery-actions">
-                <button class="continue-btn" onclick="copyMasteryReport()">Copy Report</button>
+                <button class="continue-btn" onclick="downloadTelemetryCsv()">Download Game Data</button>
+<button class="continue-btn" onclick="copyMasteryReport()">Copy Report</button>
                 ${report.noMajorWeakness && gameMode !== "legendary" ? `<button class="continue-btn" onclick="startSelectedMode('legendary')">Enter Legendary Mode</button>` : ""}
                 <button class="continue-btn secondary-modal-btn" onclick="restoreResultsScreen()">Back to Results</button>
                 <button class="continue-btn secondary-modal-btn" onclick="returnToModeSelectFromRun()">Choose Another Nexus Run</button>
@@ -7690,7 +7700,10 @@ function copyMasteryReport(){
         ...(report.hasSkillWeakness && report.weakestSkills.length ? report.weakestSkills.map(item => `- ${item.label}: ${formatPercent(item.accuracy)} (${item.correct}/${item.attempts})`) : ["- No major skill weakness detected."]),
         "",
         "Next Moves:",
-        ...report.nextSteps.map(step => `- ${step}`)
+        ...report.nextSteps.map(step => `- ${step}`),
+        "",
+        "Recommended Review:",
+        ...(report.recommendations || getRecommendedReviewResources(report)).map(resource => `- ${resource.title} (${resource.typeLabel || resource.type}): ${resource.url}`)
     ].filter(line => line !== null);
 
     const text = lines.join("\n");
@@ -7817,7 +7830,7 @@ function formatTime(ms) {
 // Removing those will break this function.
 // =============================================     
 function copyResults() {
-    const totalTimeMs = Date.now() - startTime;
+    const totalTimeMs=freezeCompletionTime();
     const timeString = formatTime(totalTimeMs);
     const code = document.getElementById("vCode").innerText;
     const accuracy = Math.round((correctAnswers / totalAttempts) * 100);
@@ -7845,45 +7858,21 @@ function copyResults() {
     });
 }
 
-function sendGameData(data) {
-  const payload = {
-    timestamp: new Date().toISOString(),
-    runID: data.runID || localStorage.getItem("gauntletRunID") || "",
-    token: data.token || "",
-    version: "CommandNexus-ms-telemetry-v3.5",
-    userAgent: navigator.userAgent || "",
-    game: data.game || "The Command Nexus",
-    event: data.event || "",
-    user: data.user || username || "anonymous",
-	email: studentEmail || "",  
-    room: Number(data.room ?? 0),
-    questionId: Number(data.questionId ?? data.question ?? 0),
-    correct: Number(data.correct ?? 0),
-    tag: data.tag || "",
-    type: data.type || "",
-    objective: data.objective || "",
-    responseTime: Number(data.responseTime ?? data.responseTimeMs ?? 0),
-    attempt: Number(data.attempt ?? 0),
-    streak: Number(data.streak ?? 0),
-    elapsedTime: Number(data.elapsedTime ?? data.elapsedTimeMs ?? 0),
-    adaptiveMode: data.adaptiveMode || adaptiveMode || "",
-    totalTime: Number(data.totalTime ?? data.totalTimeMs ?? 0),
-    accuracy: Number(data.accuracy ?? 0),
-    maxStreak: Number(data.maxStreak ?? 0),
-    totalAttempts: Number(data.totalAttempts ?? data.attempts ?? 0),
-    verificationCode: data.verificationCode || data.code || "",
-    gameMode: data.gameMode || gameMode || "",
-    score: Number(data.score ?? 0),
-    bestScore: Number(data.bestScore ?? 0)
-  };
-
-  fetch("https://default8de80de86d8a47cbb5bc7fb9b5bf1c.64.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/239b526e4b9f4c1997a009d53a32267a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=qQhDuP6P3K8mxdCKyBaMw6S0IPd8rBn8BUAEi_CtlxQ", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-  }).catch(err => console.log("Telemetry failed:", err));
+const TELEMETRY_PREFIX="commandNexusTelemetry_";
+const TELEMETRY_VERSION="CommandNexus-local-telemetry-v4-hash-ready";
+const GAME_VERSION="Command-Nexus-2026.07.24.1";
+const TELEMETRY_LATEST_RUN_KEY="commandNexusLatestTelemetryRunID";
+const TELEMETRY_FILENAME_PREFIX="command-nexus";
+const GAME_TITLE="The Command Nexus";
+const TELEMETRY_COLUMNS = ["eventID","timestamp","telemetryVersion","gameVersion","runID","game","mode","event","room","questionID","questionVersion","difficulty","selectedIndex","correct","rapidGuessing","tag","type","objective","responseTimeMs","attempt","streak","elapsedTimeMs","adaptiveMode","remediationStage","priorExposureCount","firstExposure","score","bestScore","totalTimeMs","accuracy","maxStreak","totalAttempts","verificationCode"];
+function createTelemetryEventID(){ return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,10); }
+function readLocalTelemetry(id = runID){ try { const rows = JSON.parse(localStorage.getItem(TELEMETRY_PREFIX + (id || "unassigned")) || "[]"); return Array.isArray(rows) ? rows : []; } catch(error) { console.warn("Local telemetry could not be read:", error); return []; } }
+function escapeCsvValue(value){ const text = String(value ?? ""); return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text; }
+function downloadTelemetryCsv(){ const id = runID || localStorage.getItem(TELEMETRY_LATEST_RUN_KEY) || ""; const records = readLocalTelemetry(id); const csv = [TELEMETRY_COLUMNS.join(","), ...records.map(record => TELEMETRY_COLUMNS.map(column => escapeCsvValue(record[column])).join(","))].join("\r\n"); const blob = new Blob([csv], {type:"text/csv;charset=utf-8"}); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = TELEMETRY_FILENAME_PREFIX + "-" + (id || "game-data") + ".csv"; document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(link.href), 0); }
+function sendGameData(data = {}){
+ const eventName=String(data.event||""), response=eventName==="question", completion=/(?:^|_)complete$/.test(eventName), activeRunID=data.runID||runID||localStorage.getItem("gauntletRunID")||"", records=readLocalTelemetry(activeRunID), questionID=Number(data.questionId ?? data.question ?? 0);
+ const record={eventID:createTelemetryEventID(),timestamp:new Date().toISOString(),telemetryVersion:TELEMETRY_VERSION,gameVersion:GAME_VERSION,runID:activeRunID,game:data.game||GAME_TITLE,mode:data.mode||gameMode||"standard",event:eventName,room:Number(data.room??room??0),questionID,questionVersion:Number(data.questionVersion??currentQuestion?.version??1),difficulty:data.difficulty||currentQuestion?.difficulty||"",selectedIndex:response?Number(data.selectedIndex??-1):-1,correct:response?Number(data.correct??0):0,rapidGuessing:response?Number(data.rapidGuessing??0):0,tag:data.tag||"",type:data.type||"",objective:data.objective||"",responseTimeMs:Number(data.responseTime??data.responseTimeMs??0),attempt:Number(data.attempt??totalAttempts??0),streak:Number(data.streak??streak??0),elapsedTimeMs:completion?Number(data.totalTime??data.totalTimeMs??getElapsedTimeMs()):Number(data.elapsedTime??data.elapsedTimeMs??getElapsedTimeMs()),adaptiveMode:data.adaptiveMode||adaptiveMode||"",remediationStage:data.remediationStage||remediationState?.stage||"",priorExposureCount:questionID>0?records.filter(item=>Number(item.questionID)===questionID&&item.event==="question").length:0,firstExposure:questionID>0&&records.every(item=>Number(item.questionID)!==questionID)?1:0,score:Number(data.score??scoreAttackScore??0),bestScore:Number(data.bestScore??scoreAttackBestScore??0),totalTimeMs:Number(data.totalTime??data.totalTimeMs??finalElapsedTimeMs??0),accuracy:Number(data.accuracy??(totalAttempts?correctAnswers/totalAttempts:0)),maxStreak:Number(data.maxStreak??maxStreak??0),totalAttempts:Number(data.totalAttempts??totalAttempts??0),verificationCode:data.verificationCode||data.code||""};
+ records.push(record); localStorage.setItem(TELEMETRY_PREFIX + activeRunID, JSON.stringify(records.slice(-1500))); localStorage.setItem(TELEMETRY_LATEST_RUN_KEY,activeRunID); return record;
 }
    
 // =====================================================
