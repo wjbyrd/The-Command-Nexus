@@ -2413,7 +2413,7 @@ body.game-active #soundToggle {
     .mastery-report-screen{ padding:14px; }
     .mastery-report-title{ font-size:24px; }
     .mastery-row-main{ flex-direction:column; gap:4px; }
-    .mastery-row-score{ white-space:normal; }
+    .mastery-row-score{ white-space:nowrap; }
 }
 
 
@@ -2507,25 +2507,25 @@ Respect structure strictly.
 
     <div class="mode-grid">
       <button class="mode-card" onclick="startSelectedMode('standard')" aria-label="Standard Campaign. Full 30-room run with bosses, artifacts, setbacks, save and resume status, and Nexus progress.">
-        <img src="mode_standard.webp" alt="" aria-hidden="true">
+        <img src="../mode_standard.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Standard Campaign</span>
         <span class="mode-card-text">Full 30-room run with bosses, artifacts, setbacks, and Nexus progress.</span>
       </button>
 
       <button class="mode-card" onclick="startSelectedMode('timed')" aria-label="Timed Trial. Ten minute run with visible countdown, normal setbacks, rapid guessing penalties, and results saved separately.">
-        <img src="mode_timed.webp" alt="" aria-hidden="true">
+        <img src="../mode_timed.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Timed Trial</span>
         <span class="mode-card-text">Ten minutes. Correct answers advance. Misses push you back.</span>
       </button>
 
       <button class="mode-card" onclick="startSelectedMode('exam')" aria-label="Exam Drill. No bosses, no artifacts, no Nexus progress. Just adaptive practice.">
-        <img src="mode_exam.webp" alt="" aria-hidden="true">
+        <img src="../mode_exam.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Exam Drill</span>
         <span class="mode-card-text">No bosses. No artifacts. No Nexus progress. Just adaptive practice.</span>
       </button>
 
       <button class="mode-card" onclick="startSelectedMode('legendary')" aria-label="Legendary Mode. Full 30-room campaign using the hardest available Command Nexus questions.">
-        <img src="mode_legendary.webp" alt="" aria-hidden="true">
+        <img src="../mode_legendary.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Legendary Mode</span>
         <span class="mode-card-text">Full campaign. Hardest available questions. Bosses still hit. No mercy.</span>
       </button>
@@ -2534,7 +2534,7 @@ Respect structure strictly.
            New arcade-style scoring mode. Uses the normal 30-room path and bosses,
            but does NOT count as Standard Campaign Nexus progress. -->
       <button class="mode-card" onclick="startSelectedMode('score')" aria-label="Score Attack. Build points through correct answers, streaks, and speed. Misses subtract points and rapid guessing is punished.">
-        <img src="scoreattack.webp" alt="" aria-hidden="true">
+        <img src="../scoreattack.webp" alt="" aria-hidden="true">
         <span class="mode-card-title">Score Attack</span>
         <span class="mode-card-text">Rack up points with correct answers, streaks, and speed. Misses cost you.</span>
       </button>
@@ -2605,7 +2605,7 @@ or simplify this section.
         <div id="gameShell">
             <div id="wizardBox">
                 <div id="wizardName">The Custodian</div>
-                <img src="custodian.webp" id="wizardImage">
+                <img src="../custodian.webp" id="wizardImage">
             </div>
 
             <!-- GAME -->
@@ -2702,6 +2702,16 @@ window.COMMAND_NEXUS_BUILD = "STATE PRECEDENCE REPAIR 20260717_1";
 // Safe to remove entirely if you don't want sound.
 // Does NOT affect game logic.
      
+function createSilentAudio(){
+    return {
+        muted: false,
+        volume: 0,
+        currentTime: 0,
+        pause(){},
+        play(){ return Promise.resolve(); }
+    };
+}
+
 const bgMusic = new Audio('chamber.mp3'); 
 bgMusic.loop = true; 
 bgMusic.volume = 0.05; 
@@ -2714,13 +2724,13 @@ const finalBossMusic = new Audio('final_boss_music.mp3');
 finalBossMusic.loop = true;
 finalBossMusic.volume = 0.12; // slightly louder, it's the final fight    
     
-const sfxMilestone = new Audio('streak.wav');
-const sfxVictory = new Audio('victory.wav');
-const sfxBossHit = new Audio('boss_hit.wav');
+const sfxMilestone = createSilentAudio();
+const sfxVictory = createSilentAudio();
+const sfxBossHit = createSilentAudio();
       sfxBossHit.volume = 0.5;
-const sfxCorrect = new Audio('ding.wav');
+const sfxCorrect = createSilentAudio();
       sfxCorrect.volume = 0.25;
-const sfxWrong = new Audio('mistake.wav');
+const sfxWrong = createSilentAudio();
       sfxWrong.volume = 0.4;
     
 const hallwayImages = [
@@ -2895,7 +2905,14 @@ let runID = "";
 let questionStartTime = 0;
 let streak = 0; 
 let startTime;
-let finalElapsedTimeMs=null;function getElapsedTimeMs(){return Number.isFinite(finalElapsedTimeMs)?finalElapsedTimeMs:(startTime?Date.now()-startTime:0);}function freezeCompletionTime(fallbackMs=0){if(!Number.isFinite(finalElapsedTimeMs))finalElapsedTimeMs=startTime?Date.now()-startTime:fallbackMs;return finalElapsedTimeMs;} // Will be set in startGame()
+let finalElapsedTimeMs=null;function getElapsedTimeMs(){return Number.isFinite(finalElapsedTimeMs)?finalElapsedTimeMs:(startTime?Date.now()-startTime:0);}function freezeCompletionTime(fixedDurationMs=0){
+    if(!Number.isFinite(finalElapsedTimeMs)){
+        finalElapsedTimeMs = Number.isFinite(fixedDurationMs) && fixedDurationMs > 0
+            ? fixedDurationMs
+            : (startTime ? Date.now() - startTime : 0);
+    }
+    return finalElapsedTimeMs;
+} // Will be set in startGame()
 let room = localStorage.getItem('commandNexusRoom') ? parseInt(localStorage.getItem('commandNexusRoom')) : 1;
 let currentQuestion = null;
 let answerSubmissionPending=false;
@@ -2928,6 +2945,10 @@ const RAPID_GUESS_CONFIG = {
     minAttempts: 5,         // don't trigger until at least 5 recent attempts exist
     avgTimeMs: 3000,        // average under 3 seconds = suspicious
     maxAccuracy: 0.50,      // under 50% accuracy = not engaged
+    burstWindowSize: 4,     // also inspect the most recent local burst
+    burstFastMs: 2500,      // a response under 2.5 seconds counts as fast
+    burstMinFast: 3,        // three fast answers in the burst is suspicious
+    burstMaxAccuracy: 0.25, // no more than one correct answer in four
     lockMs: 4500            // pause length
 };
 let tagHistory = [];
@@ -3147,6 +3168,7 @@ function isBossRoomForMode(r){
 }
 
 function getModeDisplayName(){
+    if(gameMode === "timed-ended-early") return "Timed Trial Ended Early";
     if(gameMode === "timed") return "Timed Trial";
     if(gameMode === "exam") return "Exam Drill";
     if(gameMode === "score") return "Score Attack";
@@ -4629,22 +4651,73 @@ function closeGameModal(){
 }
 
 function endTimedAttemptEarly(){
+    if(gameMode !== "timed") return;
+
     stopTimedModeClock();
+    const actualElapsedTimeMs = freezeCompletionTime();
+    gameMode = "timed-ended-early";
+    answerSubmissionPending = true;
 
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
         : 0;
-
     const reachedRoom = Math.max(timedHighestRoom || 1, room || 1);
 
-    localStorage.setItem("commandNexusTimedLastRoom", String(reachedRoom));
+    localStorage.setItem("commandNexusTimedLastRoom", String(room || 1));
+    localStorage.setItem("commandNexusTimedLastHighestRoom", String(reachedRoom));
     localStorage.setItem("commandNexusTimedLastAccuracy", String(accuracy));
     localStorage.setItem("commandNexusTimedLastAttempts", String(totalAttempts));
     localStorage.setItem("commandNexusTimedLastStreak", String(maxStreak));
+    localStorage.setItem("commandNexusTimedLastSetbacks", String(timedSetbacks));
 
-    recordTimedTrialAchievementStats(accuracy, reachedRoom);
+    sendGameData({
+        runID: runID,
+        game: "The Command Nexus",
+        event: "timed_ended_early",
+        user: username,
+        room: room,
+        questionId: 0,
+        correct: 0,
+        tag: "",
+        type: "",
+        objective: "",
+        responseTime: 0,
+        attempt: totalAttempts,
+        streak: streak,
+        elapsedTime: actualElapsedTimeMs,
+        adaptiveMode: "timed_ended_early",
+        totalTime: actualElapsedTimeMs,
+        accuracy: accuracy / 100,
+        maxStreak: maxStreak,
+        totalAttempts: totalAttempts
+    });
 
-    returnToModeSelectFromRun();
+    document.getElementById("bossMessage").innerText = "";
+    document.getElementById("formulaHint").innerText = "";
+    document.getElementById("artifactDrop").style.display = "none";
+    closeGraphLightbox();
+    const imageBox = document.getElementById("questionImageBox");
+    imageBox.innerHTML = "";
+    imageBox.style.display = "none";
+
+    document.getElementById("question").innerHTML = `
+        <span class="boss-title">TIMED TRIAL ENDED EARLY</span>
+        <div class="boss-q">
+            Actual Time: ${formatTime(actualElapsedTimeMs)}<br>
+            Room Reached: ${reachedRoom}<br>
+            Accuracy: ${accuracy}%<br>
+            Total Attempts: ${totalAttempts}<br>
+            Best Streak: ${maxStreak}<br>
+            Setbacks Taken: ${timedSetbacks}
+        </div>
+    `;
+
+    document.getElementById("answers").innerHTML = `
+        <button class="continue-btn" onclick="downloadTelemetryCsv()">Download Game Data</button>
+        <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
+        <button class="continue-btn" onclick="returnToModeSelectFromRun()">Return to Nexus Menu</button>
+    `;
+    document.getElementById("message").innerText = "The trial ends early. The Nexus preserves the record.";
 }
 
 function startNewRun(){
@@ -4936,6 +5009,7 @@ function endTimedModeRun(){
     if(gameMode !== "timed") return;
 
     stopTimedModeClock();
+    freezeCompletionTime(timedModeDurationMs);
     gameMode = "timed-complete";
 
     const accuracy = totalAttempts > 0
@@ -4977,6 +5051,7 @@ function endTimedModeRun(){
     document.getElementById("formulaHint").innerText = "";
     document.getElementById("artifactDrop").style.display = "none";
     closeGraphLightbox();
+    closeGraphLightbox();
     document.getElementById("questionImageBox").style.display = "none";
 
     document.getElementById("question").innerHTML = `
@@ -4984,6 +5059,7 @@ function endTimedModeRun(){
         <div class="boss-q">
             You reached as far as Room ${timedHighestRoom}.<br><br>
             Final Room: ${room}<br>
+            Final Time: ${formatTime(getElapsedTimeMs())}<br>
             Accuracy: ${accuracy}%<br>
             Total Attempts: ${totalAttempts}<br>
             Best Streak: ${maxStreak}<br>
@@ -5917,6 +5993,7 @@ renderQuestionImage(currentQuestion);
 // =============================================     
 function displayQuestion(){
 answerSubmissionPending=false;
+    questionStartTime = Date.now();
     const optionsElement = document.getElementById("answers");
     optionsElement.innerHTML = "";
 
@@ -5956,21 +6033,31 @@ function checkRapidGuessing(isCorrect, responseTime){
         rapidGuessHistory.shift();
     }
 
-    if(rapidGuessHistory.length < RAPID_GUESS_CONFIG.minAttempts){
-        return {
-            triggered: false,
-            avgTime: responseTime,
-            accuracy: isCorrect ? 1 : 0
-        };
-    }
-
     const recent = rapidGuessHistory.slice(-RAPID_GUESS_CONFIG.windowSize);
+    const avgTime = recent.length
+        ? recent.reduce((sum, item) => sum + item.responseTime, 0) / recent.length
+        : responseTime;
+    const accuracy = recent.length
+        ? recent.reduce((sum, item) => sum + item.correct, 0) / recent.length
+        : (isCorrect ? 1 : 0);
 
-    const avgTime = recent.reduce((sum, item) => sum + item.responseTime, 0) / recent.length;
-    const accuracy = recent.reduce((sum, item) => sum + item.correct, 0) / recent.length;
+    const rollingPattern = recent.length >= RAPID_GUESS_CONFIG.minAttempts
+        && avgTime < RAPID_GUESS_CONFIG.avgTimeMs
+        && accuracy < RAPID_GUESS_CONFIG.maxAccuracy;
+
+    const burst = recent.slice(-RAPID_GUESS_CONFIG.burstWindowSize);
+    const burstFastCount = burst.filter(item =>
+        item.responseTime < RAPID_GUESS_CONFIG.burstFastMs
+    ).length;
+    const burstAccuracy = burst.length
+        ? burst.reduce((sum, item) => sum + item.correct, 0) / burst.length
+        : 1;
+    const burstPattern = burst.length === RAPID_GUESS_CONFIG.burstWindowSize
+        && burstFastCount >= RAPID_GUESS_CONFIG.burstMinFast
+        && burstAccuracy <= RAPID_GUESS_CONFIG.burstMaxAccuracy;
 
     return {
-        triggered: avgTime < RAPID_GUESS_CONFIG.avgTimeMs && accuracy < RAPID_GUESS_CONFIG.maxAccuracy,
+        triggered: rollingPattern || burstPattern,
         avgTime,
         accuracy
     };
@@ -7275,7 +7362,7 @@ function getTypeMasteryEntries(){
 
 function sortStrongest(entries){
     return [...entries]
-        .filter(entry => entry.attempts >= 2)
+        .filter(entry => entry.attempts >= 2 && Number(entry.accuracy) >= 0.70)
         .sort((a,b) => (b.accuracy - a.accuracy) || (b.fluency - a.fluency) || (b.attempts - a.attempts));
 }
 
@@ -7392,6 +7479,7 @@ function getRecentBehaviorSignals(){
 
 
 function getMasteryReportModeName(){
+    if(gameMode === "timed-ended-early") return "Timed Trial Ended Early";
     if(gameMode === "timed-complete") return "Timed Trial";
     if(gameMode === "score") return "Score Attack";
     if(gameMode === "legendary") return "Legendary Mode";
