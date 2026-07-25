@@ -1,4 +1,4 @@
-<!-- COMMAND NEXUS STUDENT-BANK LOADER REPAIR BUILD 20260725_1 -->
+<!-- COMMAND NEXUS NATIONAL-ENGINE ALIGNMENT BUILD 20260725_2 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2682,18 +2682,25 @@ or simplify this section.
    2. GAME ELEMENTS (CHANGE ELEMENTS WITH NEW GAME)
 ========================================= -->
 <script src="instructional_resources.js?v=20260724_1" charset="UTF-8"></script>
-<script src="command_nexus_question_bank_student.js?v=20260725_1" charset="UTF-8"></script>
+<script src="command_nexus_question_bank_student.js?v=20260725_2" charset="UTF-8"></script>
  <script>
 
-if (typeof questionBanks === "undefined"
-    || typeof microSkillRepairPools === "undefined"
-    || typeof microSkillBridgePools === "undefined"
-    || typeof calculationGenerators === "undefined") {
+if(typeof questionBanks === "undefined"){
     throw new Error("The Command Nexus question bank did not load. Check command_nexus_question_bank_student.js.");
 }
+if(typeof microSkillRepairPools === "undefined" || typeof microSkillBridgePools === "undefined"){
+    throw new Error("The Command Nexus repair/bridge pools did not load. Check command_nexus_question_bank_student.js.");
+}
 
-console.log("COMMAND NEXUS BUILD: STUDENT-BANK LOADER REPAIR 20260725_1");
-window.COMMAND_NEXUS_BUILD = "STUDENT-BANK LOADER REPAIR 20260725_1";
+console.log("The Command Nexus question bank loaded", {
+    easy: questionBanks.easy?.length || 0,
+    medium: questionBanks.medium?.length || 0,
+    hard: questionBanks.hard?.length || 0,
+    elite: questionBanks.elite?.length || 0,
+    legendary: questionBanks.legendary?.length || 0
+});
+console.log("COMMAND NEXUS BUILD: NATIONAL-ENGINE ALIGNMENT 20260725_2");
+window.COMMAND_NEXUS_BUILD = "NATIONAL-ENGINE ALIGNMENT 20260725_2";
 
 // =============================================
 // AUDIO SYSTEM — OPTIONAL
@@ -4888,7 +4895,6 @@ if(!hasSavedRun){
     totalAttempts = 0;
     correctAnswers = 0;
     bossPool = [];
-    calcBag = [];
     conceptMemory = {};
     masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
     tagHistory = [];
@@ -4971,7 +4977,6 @@ function resetRunStateForNewMode(){
     maxStreak = 0;
     totalAttempts = 0;
     correctAnswers = 0;
-    if(typeof calcBag !== "undefined") calcBag = [];
     conceptMemory = {};
     masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
     tagHistory = [];
@@ -5200,7 +5205,7 @@ function getDifficultyForMode(){
          : (room <= 19) ? "medium"
          : (room === 20) ? "mediumBoss"
          : (room <= 25) ? "hard"
-         : (room <= 29) ? "calculation"
+         : (room <= 29) ? "hard"
          : "finalBoss";
 }
 
@@ -5358,7 +5363,7 @@ function wizardSpeak(text){
 // =============================================
 // =============================================
 // QUESTION BANKS MOVED OUT OF INDEX.HTML
-// Source file: command_nexus_question_bank_student.js?v=20260725_1
+// Source file: command_nexus_question_bank_student.js?v=20260725_2
 // Keep question pools out of View Page Source. Not real security. Just less obvious.
 
 // ANSWER SHUFFLING — DO NOT MODIFY CORE LOGIC
@@ -5389,48 +5394,6 @@ function wizardSpeak(text){
 //
 // This function ensures fairness in answer order.
 // =============================================   
-function normalizeQuestionChoices(question){
-    if(!question || !Array.isArray(question.options)) return question;
-
-    const correct = question.options[question.a];
-    const seen = new Set([String(correct)]);
-    const options = [correct];
-
-    question.options.forEach((option, index) => {
-        if(index === question.a) return;
-
-        const displayedOption = String(option);
-        if(!seen.has(displayedOption)){
-            seen.add(displayedOption);
-            options.push(option);
-        }
-    });
-
-    return { ...question, options, a: 0 };
-}
-
-function hasUniqueDisplayedChoices(question){
-    if(!question || !Array.isArray(question.options)) return false;
-
-    const correct = question.options[question.a];
-    const displayedChoices = question.options.map(option => String(option));
-
-    return displayedChoices.length === 4
-        && new Set(displayedChoices).size === displayedChoices.length
-        && displayedChoices.filter(option => option === String(correct)).length === 1;
-}
-
-function generateUniqueCalculationQuestion(generator, maxAttempts = 12){
-    let question = null;
-
-    for(let attempt = 0; attempt < maxAttempts; attempt++){
-        question = generator();
-        if(hasUniqueDisplayedChoices(question)) return question;
-    }
-
-    return normalizeQuestionChoices(question);
-}
-
 function shuffleOptions(question){
     const q = {
         ...question,
@@ -5470,8 +5433,8 @@ async function isQuestionAnswerCorrect(question, selectedIndex){
 
 // =============================================
 // =============================================
-// DYNAMIC CALCULATION QUESTIONS MOVED OUT OF INDEX.HTML
-// Source file: command_nexus_question_bank_student.js?v=20260725_1
+// STATIC QUESTION POOLS ARE LOADED FROM THE PUBLISHED STUDENT BANK
+// Rooms 26–29 use the hard pool, matching The National Engine.
 
 // QUESTION SELECTION ENGINE — DO NOT MODIFY
 // =============================================
@@ -5483,13 +5446,6 @@ async function isQuestionAnswerCorrect(question, selectedIndex){
 // Breaking this = repeated questions or bad difficulty scaling
      
 function randomQuestion(poolName) {
-    // --- SPECIAL CALCULATED ROOMS (26-29) ---
-    // These ensure the student practices specific math skills before the boss
-if (room >= 26 && room <= 29){
-    let pick = pickCalcGenerator();
-    return generateUniqueCalculationQuestion(pick);
-}
-
     let pool = questionBanks[poolName]
 
     // Safety check in case poolName is invalid
@@ -5601,9 +5557,7 @@ function updateMazeTrack() {
 // =============================================
 // RANDOMIZATION SYSTEM — DO NOT MODIFY CORE LOGIC
 // =============================================
-// Controls fair, non-repeating selection of:
-// - calculation generators
-// - question pools
+// Controls fair, non-repeating selection of question pools
 //
 // Uses "shuffle + bag" system to ensure:
 // - no immediate repeats
@@ -5611,12 +5565,11 @@ function updateMazeTrack() {
 //
 // ---------------------------------------------
 // SAFE TO EDIT:
-// - adding new generators (calculationGenerators)
 // - modifying pool content
 //
 // DO NOT MODIFY:
 // - shuffle logic
-// - bag system (calcBag, _remaining)
+// - bag system (_remaining)
 // - pop() usage
 //
 // Breaking this WILL cause:
@@ -5635,19 +5588,6 @@ function shuffle(arr){
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
-}
-
-// Bag system for calculation generators
-// Ensures all generators are used before repeating
-let calcBag = [];
-
-// Pulls one calculation generator from the bag
-// Refills bag when empty (reshuffled)
-function pickCalcGenerator(){
-    if(calcBag.length === 0){
-        calcBag = shuffle([...calculationGenerators]);
-    }
-    return calcBag.pop();
 }
 
 // Generic bag-based random picker for any pool
@@ -5971,11 +5911,7 @@ function loadQuestion() {
 // QUESTION SELECTION
 // =============================
 
-if(diff === "calculation"){
-    const generator = pickCalcGenerator();
-    currentQuestion = shuffleOptions(generateUniqueCalculationQuestion(generator));
-}
-else if(adjustedDiff === "elite"){
+if(adjustedDiff === "elite"){
     currentQuestion = shuffleOptions(
         getAdaptiveQuestion("elite", strongestTag || weakestTag, {
             mode: "challenge",
