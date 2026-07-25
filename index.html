@@ -4733,8 +4733,6 @@ function endTimedAttemptEarly(){
 
     stopTimedModeClock();
     const actualElapsedTimeMs = freezeCompletionTime();
-    gameMode = "timed-ended-early";
-    answerSubmissionPending = true;
 
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
@@ -4747,6 +4745,8 @@ function endTimedAttemptEarly(){
     localStorage.setItem("commandNexusTimedLastAttempts", String(totalAttempts));
     localStorage.setItem("commandNexusTimedLastStreak", String(maxStreak));
     localStorage.setItem("commandNexusTimedLastSetbacks", String(timedSetbacks));
+
+    recordTimedTrialAchievementStats(accuracy, reachedRoom);
 
     sendGameData({
         runID: runID,
@@ -4770,32 +4770,11 @@ function endTimedAttemptEarly(){
         totalAttempts: totalAttempts
     });
 
-    document.getElementById("bossMessage").innerText = "";
-    document.getElementById("formulaHint").innerText = "";
-    document.getElementById("artifactDrop").style.display = "none";
-    closeGraphLightbox();
-    const imageBox = document.getElementById("questionImageBox");
-    imageBox.innerHTML = "";
-    imageBox.style.display = "none";
-
-    document.getElementById("question").innerHTML = `
-        <span class="boss-title">TIMED TRIAL ENDED EARLY</span>
-        <div class="boss-q">
-            Actual Time: ${formatTime(actualElapsedTimeMs)}<br>
-            Room Reached: ${reachedRoom}<br>
-            Accuracy: ${accuracy}%<br>
-            Total Attempts: ${totalAttempts}<br>
-            Best Streak: ${maxStreak}<br>
-            Setbacks Taken: ${timedSetbacks}
-        </div>
-    `;
-
-    document.getElementById("answers").innerHTML = `
-        <button class="continue-btn" onclick="downloadTelemetryCsv()">Download Game Data</button>
-        <button class="continue-btn" onclick="showMasteryReportScreen()">View Mastery Report</button>
-        <button class="continue-btn" onclick="returnToModeSelectFromRun()">Return to Nexus Menu</button>
-    `;
-    document.getElementById("message").innerText = "The trial ends early. The Nexus preserves the record.";
+    // Leaving a run is navigation, not completion. Preserve the statistics,
+    // invalidate pending callbacks, and return directly to the mode menu.
+    gameMode = "timed-ended-early";
+    answerSubmissionPending = true;
+    returnToModeSelectFromRun();
 }
 
 function startNewRun(){
@@ -6088,9 +6067,8 @@ function checkRapidGuessing(isCorrect, responseTime){
 // Check for artifact names and CHANGE
      
 async function answer(choice) {
-if(answerSubmissionPending||rapidGuessLocked)return;answerSubmissionPending=true;setAnswerButtonsDisabled(true);const responseTime=Date.now()-questionStartTime;let isCorrect=false;try{isCorrect=await isQuestionAnswerCorrect(currentQuestion,choice);}catch(error){console.error(error);answerSubmissionPending=false;setAnswerButtonsDisabled(false);showGameModal({title:'Answer Check Failed',text:'The Command Nexus could not verify this answer. Reload the game files and try again.',confirmText:'Continue'});return;}totalAttempts++;
-
-    const answerSessionId = runSessionId;
+const answerSessionId = runSessionId;
+if(answerSubmissionPending||rapidGuessLocked)return;answerSubmissionPending=true;setAnswerButtonsDisabled(true);const responseTime=Date.now()-questionStartTime;let isCorrect=false;try{isCorrect=await isQuestionAnswerCorrect(currentQuestion,choice);if(answerSessionId!==runSessionId)return;}catch(error){if(answerSessionId!==runSessionId)return;console.error(error);answerSubmissionPending=false;setAnswerButtonsDisabled(false);showGameModal({title:'Answer Check Failed',text:'The Command Nexus could not verify this answer. Reload the game files and try again.',confirmText:'Continue'});return;}totalAttempts++;
 
     // --- GLOBAL MEMORY DECAY ---
     for(let tag in conceptMemory){
@@ -6142,7 +6120,7 @@ selectedIndex: choice,
     // Same question. No movement. No reward.
     rapidGuessHistory = [];
 
-    setTimeout(() => {
+    scheduleForCurrentRun(() => {
         rapidGuessLocked = false;
         questionStartTime = Date.now();
         displayQuestion();
@@ -6498,9 +6476,14 @@ if (gameMode !== "legendary" && !remediationState.active && currentQuestion.tag 
 
     saveGameState();
 
-    alert(`Incorrect! You trip in the darkness and tumble back to Room ${room}.`);
-
-    loadQuestion();
+    showGameModal({
+        title: "Wrong Turn",
+        text: `Incorrect! You trip in the darkness and tumble back to Room ${room}.`,
+        confirmText: "Continue",
+        onConfirm: function(){
+            loadQuestion();
+        }
+    });
 }
 
 // =============================================
@@ -7996,4 +7979,3 @@ function sendGameData(data = {}){
 </script>
 </body>
 </html>
-
