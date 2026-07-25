@@ -1,4 +1,4 @@
-<!-- COMMAND NEXUS STATE-PRECEDENCE REPAIR BUILD 20260717_1 -->
+<!-- COMMAND NEXUS STUDENT-BANK LOADER REPAIR BUILD 20260725_1 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +27,7 @@ you WILL break the game.
 
 If something breaks, check:
 - Question IDs are unique
-- Each question has: q, options, a, tag, type, feedback
+- Each question has: q, options, a for faculty/dynamic questions OR aHash for published questions, tag, type, feedback
 - Tags/types are consistent
 
 =====================================================
@@ -2682,18 +2682,18 @@ or simplify this section.
    2. GAME ELEMENTS (CHANGE ELEMENTS WITH NEW GAME)
 ========================================= -->
 <script src="instructional_resources.js?v=20260724_1" charset="UTF-8"></script>
-<script src="question_bank.js?v=20260717_1" charset="UTF-8"></script>
+<script src="command_nexus_question_bank_student.js?v=20260725_1" charset="UTF-8"></script>
  <script>
 
 if (typeof questionBanks === "undefined"
     || typeof microSkillRepairPools === "undefined"
     || typeof microSkillBridgePools === "undefined"
     || typeof calculationGenerators === "undefined") {
-    throw new Error("Command Nexus question_bank.js did not load. Check file path and version string.");
+    throw new Error("The Command Nexus question bank did not load. Check command_nexus_question_bank_student.js.");
 }
 
-console.log("COMMAND NEXUS BUILD: STATE PRECEDENCE REPAIR 20260717_1");
-window.COMMAND_NEXUS_BUILD = "STATE PRECEDENCE REPAIR 20260717_1";
+console.log("COMMAND NEXUS BUILD: STUDENT-BANK LOADER REPAIR 20260725_1");
+window.COMMAND_NEXUS_BUILD = "STUDENT-BANK LOADER REPAIR 20260725_1";
 
 // =============================================
 // AUDIO SYSTEM — OPTIONAL
@@ -5358,7 +5358,7 @@ function wizardSpeak(text){
 // =============================================
 // =============================================
 // QUESTION BANKS MOVED OUT OF INDEX.HTML
-// Source file: question_bank.js?v=20260717_1
+// Source file: command_nexus_question_bank_student.js?v=20260725_1
 // Keep question pools out of View Page Source. Not real security. Just less obvious.
 
 // ANSWER SHUFFLING — DO NOT MODIFY CORE LOGIC
@@ -5471,7 +5471,7 @@ async function isQuestionAnswerCorrect(question, selectedIndex){
 // =============================================
 // =============================================
 // DYNAMIC CALCULATION QUESTIONS MOVED OUT OF INDEX.HTML
-// Source file: question_bank.js?v=20260717_1
+// Source file: command_nexus_question_bank_student.js?v=20260725_1
 
 // QUESTION SELECTION ENGINE — DO NOT MODIFY
 // =============================================
