@@ -3077,6 +3077,7 @@ let timedModeEndTime = null;
 let timedModeTimerInterval = null;
 let timedHighestRoom = 1;
 let timedSetbacks = 0;
+let timedModeTerminal = false;
 
 // =============================================
 // SCORE ATTACK MODE ADDITION — CONFIG + STATE
@@ -3284,9 +3285,44 @@ function scheduleForCurrentRun(callback, delay){
 
     return setTimeout(() => {
         if(scheduledSessionId !== runSessionId) return;
+        if(isTimedModeTerminal()) return;
+        if(isTimedModeExpired()){
+            endTimedModeRun();
+            return;
+        }
         callback();
     }, delay);
 }
+
+function isTimedModeExpired(){
+    return gameMode === "timed"
+        && Number.isFinite(timedModeEndTime)
+        && Date.now() >= timedModeEndTime;
+}
+
+function isTimedModeTerminal(){
+    return timedModeTerminal || gameMode === "timed-complete";
+}
+
+function reconcileTimedModeClock(){
+    if(gameMode !== "timed" || isTimedModeTerminal()) return;
+
+    if(isTimedModeExpired()){
+        endTimedModeRun();
+        return;
+    }
+
+    updateTimedModeClock();
+}
+
+document.addEventListener("visibilitychange", function(){
+    if(!document.hidden){
+        reconcileTimedModeClock();
+    }
+});
+
+window.addEventListener("pageshow", reconcileTimedModeClock);
+window.addEventListener("focus", reconcileTimedModeClock);
 
 // =============================================
 // SCORE ATTACK MODE ADDITION — SCORING HELPERS
@@ -4746,6 +4782,7 @@ function closeGameModal(){
 function endTimedAttemptEarly(){
     if(gameMode !== "timed") return;
 
+    timedModeTerminal = true;
     stopTimedModeClock();
     const actualElapsedTimeMs = freezeCompletionTime();
 
@@ -4954,6 +4991,7 @@ if(!hasSavedRun){
 }
 
 function resetRunStateForNewMode(){
+    timedModeTerminal = false;
     stopTimedModeClock();
     timedModeEndTime = null;
     room = 1;
@@ -4994,6 +5032,7 @@ function resetRunStateForNewMode(){
 
 function initializeRunForMode(mode){
     gameMode = mode || "standard";
+    timedModeTerminal = false;
 
     const autosave = document.getElementById("autosave");
     if(autosave){
@@ -5020,6 +5059,7 @@ function initializeRunForMode(mode){
 }
 
 function startTimedModeClock(){
+    timedModeTerminal = false;
     timedModeEndTime = Date.now() + timedModeDurationMs;
 
     const hud = document.getElementById("timedModeHud");
@@ -5070,11 +5110,15 @@ function updateTimedModeClock(){
 }
 
 function endTimedModeRun(){
-    if(gameMode !== "timed") return;
+    if(gameMode !== "timed" || timedModeTerminal) return;
 
+    timedModeTerminal = true;
     beginRunSession();
+    answerSubmissionPending = true;
+    rapidGuessLocked = true;
+    setAnswerButtonsDisabled(true);
     stopTimedModeClock();
-    freezeCompletionTime(timedModeDurationMs);
+    finalElapsedTimeMs = timedModeDurationMs;
     gameMode = "timed-complete";
 
     const accuracy = totalAttempts > 0
@@ -5149,6 +5193,7 @@ function restartTimedMode(){
 }
 
 function returnToModeSelectFromRun(){
+    timedModeTerminal = true;
     // Invalidate delayed callbacks from the run that is being left.
     beginRunSession();
     stopTimedModeClock();
@@ -5418,6 +5463,27 @@ async function isQuestionAnswerCorrect(question, selectedIndex){
         return isPublishedAnswerCorrect(question, selectedOptionText);
     }
     return Number.isInteger(question.a) && selectedIndex === question.a;
+}
+
+async function verifyQuestionAnswerWithTimeout(question, selectedIndex, timeoutMs = 5000){
+    let timeoutId = null;
+
+    const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => {
+            reject(new Error("Answer verification timed out."));
+        }, timeoutMs);
+    });
+
+    try {
+        return await Promise.race([
+            isQuestionAnswerCorrect(question, selectedIndex),
+            timeoutPromise
+        ]);
+    } finally {
+        if(timeoutId !== null){
+            clearTimeout(timeoutId);
+        }
+    }
 }
 
 // =============================================
@@ -5717,6 +5783,13 @@ function renderQuestionImage(question){
 // Changing logic here will break progression.
      
 function loadQuestion() {
+    if(isTimedModeTerminal()) return;
+
+    if(isTimedModeExpired()){
+        endTimedModeRun();
+        return;
+    }
+
     questionStartTime = Date.now(); 
     updateMazeTrack();
     const questionElement = document.getElementById("question");
@@ -5988,6 +6061,13 @@ renderQuestionImage(currentQuestion);
 // This is the bridge between UI and engine.
 // =============================================     
 function displayQuestion(){
+    if(isTimedModeTerminal()) return;
+
+    if(isTimedModeExpired()){
+        endTimedModeRun();
+        return;
+    }
+
 answerSubmissionPending=false;
     questionStartTime = Date.now();
     const optionsElement = document.getElementById("answers");
@@ -6078,7 +6158,43 @@ function checkRapidGuessing(isCorrect, responseTime){
      
 async function answer(choice) {
 const answerSessionId = runSessionId;
-if(answerSubmissionPending||rapidGuessLocked)return;answerSubmissionPending=true;setAnswerButtonsDisabled(true);const responseTime=Date.now()-questionStartTime;let isCorrect=false;try{isCorrect=await isQuestionAnswerCorrect(currentQuestion,choice);if(answerSessionId!==runSessionId)return;}catch(error){if(answerSessionId!==runSessionId)return;console.error(error);answerSubmissionPending=false;setAnswerButtonsDisabled(false);showGameModal({title:'Answer Check Failed',text:'The Command Nexus could not verify this answer. Reload the game files and try again.',confirmText:'Continue'});return;}totalAttempts++;
+
+if(isTimedModeTerminal()) return;
+
+if(isTimedModeExpired()){
+    endTimedModeRun();
+    return;
+}
+
+if(answerSubmissionPending||rapidGuessLocked)return;
+answerSubmissionPending=true;
+setAnswerButtonsDisabled(true);
+const responseTime=Date.now()-questionStartTime;
+let isCorrect=false;
+
+try{
+    isCorrect=await verifyQuestionAnswerWithTimeout(currentQuestion,choice);
+
+    if(answerSessionId!==runSessionId||isTimedModeTerminal()) return;
+
+    if(isTimedModeExpired()){
+        endTimedModeRun();
+        return;
+    }
+}catch(error){
+    if(answerSessionId!==runSessionId||isTimedModeTerminal()) return;
+    console.error(error);
+    answerSubmissionPending=false;
+    setAnswerButtonsDisabled(false);
+    showGameModal({
+        title:'Answer Check Failed',
+        text:'The Command Nexus could not verify this answer. Reload the game files and try again.',
+        confirmText:'Continue'
+    });
+    return;
+}
+
+totalAttempts++;
 
     // --- GLOBAL MEMORY DECAY ---
     for(let tag in conceptMemory){
